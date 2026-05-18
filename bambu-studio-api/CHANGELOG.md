@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1
+
+- Use the official Bambu Studio icon and logo instead of placeholder PNGs.
+- Wire `config.yaml` to the GHCR pre-built image so installs are a fast
+  pull instead of a 5–10 minute local build.
+- Switch CI to `docker/build-push-action` so the published image actually
+  ends up in the registry (the previous workflow built but failed during
+  retag).
+
 ## 0.1.0
 
 Initial release.
