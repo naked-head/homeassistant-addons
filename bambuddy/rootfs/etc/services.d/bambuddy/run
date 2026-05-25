@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Read HA options from /data/options.json
 OPTIONS_FILE="/data/options.json"
 
 if [ -f "$OPTIONS_FILE" ]; then
@@ -18,7 +17,7 @@ if [ -n "$BIND_ADDRESS" ]; then
     echo "[bambuddy] Binding to address: ${BIND_ADDRESS}"
 fi
 
-# Redirect data and logs to HA persistent storage
+# Persistent storage
 mkdir -p /data/bambuddy_data /data/bambuddy_logs
 
 if [ ! -L /app/data ]; then
@@ -30,10 +29,13 @@ if [ ! -L /app/logs ]; then
     ln -s /data/bambuddy_logs /app/logs
 fi
 
-chown -R 1000:1000 /data/bambuddy_data /data/bambuddy_logs
-
 export PORT=8000
+
 echo "[bambuddy] Starting BamBuddy on port ${PORT}..."
 
-exec /usr/local/bin/docker-entrypoint.sh \
-    sh -c "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT} --loop asyncio"
+# Bypass gosu by running as root (HA addon containers run as root anyway)
+# Skip the entrypoint entirely and start uvicorn directly
+exec python3 -m uvicorn backend.app.main:app \
+    --host 0.0.0.0 \
+    --port ${PORT} \
+    --loop asyncio
