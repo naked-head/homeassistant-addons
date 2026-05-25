@@ -10,8 +10,6 @@ arch:
 init: false
 homeassistant_api: false
 host_network: true
-privileged:
-  - NET_BIND_SERVICE
 map:
   - addon_config:rw
   - data:rw
