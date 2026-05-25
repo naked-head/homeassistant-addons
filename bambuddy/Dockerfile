@@ -6,6 +6,7 @@ FROM ${BUILD_FROM}
 COPY --from=bambuddy /app /app
 COPY --from=bambuddy /usr/local/bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY --from=bambuddy /usr/local /usr/local
+COPY --from=bambuddy /usr/sbin/gosu /usr/sbin/gosu
 
 # Copy our S6 run scripts
 COPY rootfs /
@@ -13,7 +14,8 @@ COPY rootfs /
 # Make scripts executable
 RUN chmod a+x /etc/services.d/bambuddy/run \
     && chmod a+x /etc/services.d/bambuddy/finish \
-    && chmod a+x /usr/local/bin/docker-entrypoint.sh
+    && chmod a+x /usr/local/bin/docker-entrypoint.sh \
+    && chmod a+x /usr/sbin/gosu
 
 WORKDIR /app
 
