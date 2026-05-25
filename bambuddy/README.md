@@ -1,5 +1,9 @@
 # BamBuddy Home Assistant Add-on
 
+<p align="center">
+  <img src="https://bambuddy.cool/assets/img/logo_transparent.png" alt="BamBuddy" width="300">
+</p>
+
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]
 [![License][license-shield]](LICENSE)
