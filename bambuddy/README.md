@@ -36,9 +36,15 @@ Self-hosted command center for Bambu Lab printers. Manage your entire printer fa
 | Port | Protocol | Description |
 |---|---|---|
 | 8000 | TCP | BamBuddy Web UI |
-| 1883 | TCP | MQTT (Virtual Printer) |
+| 3000 | TCP | Slicer bind/detect handshake |
+| 3002 | TCP | Slicer bind/detect handshake (alt) |
+| 2021 | UDP | SSDP printer discovery |
 | 8883 | TCP | MQTT over TLS (Virtual Printer) |
-| 2222 | TCP | SFTP (Virtual Printer) |
+| 6000 | TCP | File transfer tunnel |
+| 322 | TCP | RTSP camera streaming (X1/H2/P2) |
+| 990 | TCP | FTPS control |
+| 2024-2026 | TCP | Proprietary slicer ports (A1/P1S) |
+| 50000-50100 | TCP | FTP passive data |
 
 > **Note:** Port 8883 is also used by MQTT brokers. If you already run Mosquitto or another broker on this port, configure a separate IP alias and set `bind_address` accordingly.
 
