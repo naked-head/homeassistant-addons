@@ -6,7 +6,7 @@
 
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]
-![license-shield]: https://img.shields.io/badge/license-MIT-green.svg
+[![License][license-shield]](LICENSE)
 
 Self-hosted command center for Bambu Lab printers. Manage your entire printer farm locally — no Bambu Cloud required.
 
@@ -68,4 +68,4 @@ If you use BambuStudio installed via **Flatpak**, the certificate file is at:
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[license-shield]: https://img.shields.io/github/license/naked-head/ha-addon-bambuddy.svg
+[license-shield]: https://img.shields.io/badge/license-MIT-green.svg
