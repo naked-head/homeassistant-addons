@@ -1,27 +1,26 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/bash
+set -e
 
-# Read options from HA config
-TIMEZONE=$(bashio::config 'timezone')
-LOG_LEVEL=$(bashio::config 'log_level')
+# Read HA options from /data/options.json
+OPTIONS_FILE="/data/options.json"
 
-# Set timezone
-export TZ="${TIMEZONE}"
+if [ -f "$OPTIONS_FILE" ]; then
+    TZ=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('timezone','Europe/Rome'))")
+    LOG_LEVEL=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('log_level','info'))")
+    BIND_ADDRESS=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('bind_address',''))" 2>/dev/null || echo "")
+fi
 
-# Set log level
-export LOG_LEVEL="${LOG_LEVEL}"
+export TZ="${TZ:-Europe/Rome}"
+export LOG_LEVEL="${LOG_LEVEL:-info}"
 
-# Set bind address if specified
-if bashio::config.has_value 'bind_address'; then
-    BIND_ADDRESS=$(bashio::config 'bind_address')
-    export BIND_ADDRESS="${BIND_ADDRESS}"
-    bashio::log.info "BamBuddy binding to address: ${BIND_ADDRESS}"
+if [ -n "$BIND_ADDRESS" ]; then
+    export BIND_ADDRESS
+    echo "[bambuddy] Binding to address: ${BIND_ADDRESS}"
 fi
 
 # Redirect data and logs to HA persistent storage
-# /data and /config/addon_configs/bambuddy are persisted by HA Supervisor
 mkdir -p /data/bambuddy_data /data/bambuddy_logs
 
-# Symlink BamBuddy's data and logs dirs to HA persistent storage
 if [ ! -L /app/data ]; then
     rm -rf /app/data
     ln -s /data/bambuddy_data /app/data
@@ -31,15 +30,10 @@ if [ ! -L /app/logs ]; then
     ln -s /data/bambuddy_logs /app/logs
 fi
 
-# Ensure correct ownership
 chown -R 1000:1000 /data/bambuddy_data /data/bambuddy_logs
 
-# Port (always 8000 in addon context)
 export PORT=8000
+echo "[bambuddy] Starting BamBuddy on port ${PORT}..."
 
-bashio::log.info "Starting BamBuddy..."
-bashio::log.info "Web UI available at http://$(hostname):8000"
-
-# Run entrypoint then start uvicorn, exactly as the official image does
 exec /usr/local/bin/docker-entrypoint.sh \
     sh -c "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT} --loop asyncio"

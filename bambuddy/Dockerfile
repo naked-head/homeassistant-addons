@@ -1,21 +1,8 @@
-ARG BUILD_FROM
-FROM ghcr.io/maziggy/bambuddy:latest AS bambuddy
-FROM ${BUILD_FROM}
+FROM ghcr.io/maziggy/bambuddy:latest
 
-# Copy entire BamBuddy filesystem from official image
-COPY --from=bambuddy /app /app
-COPY --from=bambuddy /usr/local/bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-COPY --from=bambuddy /usr/local /usr/local
-COPY --from=bambuddy /usr/sbin/gosu /usr/sbin/gosu
-
-# Copy our S6 run scripts
-COPY rootfs /
-
-# Make scripts executable
-RUN chmod a+x /etc/services.d/bambuddy/run \
-    && chmod a+x /etc/services.d/bambuddy/finish \
-    && chmod a+x /usr/local/bin/docker-entrypoint.sh \
-    && chmod a+x /usr/sbin/gosu
+# Copy our S6-less startup wrapper
+COPY rootfs/etc/services.d/bambuddy/run /start.sh
+RUN chmod a+x /start.sh
 
 WORKDIR /app
 
