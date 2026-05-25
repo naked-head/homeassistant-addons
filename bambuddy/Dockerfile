@@ -1,29 +1,45 @@
-FROM ghcr.io/maziggy/bambuddy:latest
-
-# Copy our S6-less startup wrapper
-COPY rootfs/etc/services.d/bambuddy/run /start.sh
-RUN chmod a+x /start.sh
+ARG BUILD_FROM
+FROM ghcr.io/maziggy/bambuddy:latest AS builder
+FROM ${BUILD_FROM}
 
 WORKDIR /app
 
+# Install system dependencies on Alpine
+RUN apk add --no-cache \
+    build-base \
+    py3-opencv \
+    curl \
+    ffmpeg \
+    python3 \
+    py3-pip
+
+# Copy requirements and install Python dependencies
+COPY --from=builder /app/requirements.txt ./
+
+# Remove opencv-python-headless (replaced by Alpine's py3-opencv)
+RUN sed -i 's/opencv-python-headless/# opencv-python-headless/' requirements.txt && \
+    pip install --root-user-action=ignore --break-system-packages -r requirements.txt
+
+# Copy application code only (no entrypoint, no gosu)
+COPY --from=builder /app /app
+
+ENV PYTHONUNBUFFERED=1
+ENV DATA_DIR=/app/data
+ENV LOG_DIR=/app/logs
+
+# Copy S6 run scripts
+COPY rootfs /
+
 # Web UI
 EXPOSE 8000/tcp
-# Slicer bind/detect
 EXPOSE 3000/tcp
 EXPOSE 3002/tcp
-# SSDP discovery
 EXPOSE 2021/udp
-# MQTT over TLS
 EXPOSE 8883/tcp
-# File transfer tunnel
 EXPOSE 6000/tcp
-# RTSP camera (X1/H2/P2)
 EXPOSE 322/tcp
-# FTPS control
 EXPOSE 990/tcp
-# Proprietary slicer ports (A1/P1S)
 EXPOSE 2024/tcp
 EXPOSE 2025/tcp
 EXPOSE 2026/tcp
-# FTP passive data
 EXPOSE 50000-50100/tcp

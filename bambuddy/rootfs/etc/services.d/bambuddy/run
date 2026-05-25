@@ -1,23 +1,19 @@
-#!/bin/bash
-set -e
+#!/usr/bin/with-contenv bashio
 
-OPTIONS_FILE="/data/options.json"
-
-if [ -f "$OPTIONS_FILE" ]; then
-    TZ=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('timezone','Europe/Rome'))")
-    LOG_LEVEL=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('log_level','info'))")
-    BIND_ADDRESS=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('bind_address',''))" 2>/dev/null || echo "")
-fi
+# Read options from HA config
+TZ=$(bashio::config 'timezone')
+LOG_LEVEL=$(bashio::config 'log_level')
 
 export TZ="${TZ:-Europe/Rome}"
 export LOG_LEVEL="${LOG_LEVEL:-info}"
 
-if [ -n "$BIND_ADDRESS" ]; then
-    export BIND_ADDRESS
-    echo "[bambuddy] Binding to address: ${BIND_ADDRESS}"
+if bashio::config.has_value 'bind_address'; then
+    BIND_ADDRESS=$(bashio::config 'bind_address')
+    export BIND_ADDRESS="${BIND_ADDRESS}"
+    bashio::log.info "Binding to address: ${BIND_ADDRESS}"
 fi
 
-# Persistent storage
+# Persistent storage via HA /data volume
 mkdir -p /data/bambuddy_data /data/bambuddy_logs
 
 if [ ! -L /app/data ]; then
@@ -30,12 +26,9 @@ if [ ! -L /app/logs ]; then
 fi
 
 export PORT=8000
+bashio::log.info "Starting BamBuddy on port ${PORT}..."
 
-echo "[bambuddy] Starting BamBuddy on port ${PORT}..."
-
-# Bypass gosu by running as root (HA addon containers run as root anyway)
-# Skip the entrypoint entirely and start uvicorn directly
 exec python3 -m uvicorn backend.app.main:app \
     --host 0.0.0.0 \
-    --port ${PORT} \
+    --port "${PORT}" \
     --loop asyncio
