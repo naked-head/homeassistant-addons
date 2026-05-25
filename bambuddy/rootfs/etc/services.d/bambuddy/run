@@ -1,0 +1,45 @@
+#!/usr/bin/with-contenv bashio
+
+# Read options from HA config
+TIMEZONE=$(bashio::config 'timezone')
+LOG_LEVEL=$(bashio::config 'log_level')
+
+# Set timezone
+export TZ="${TIMEZONE}"
+
+# Set log level
+export LOG_LEVEL="${LOG_LEVEL}"
+
+# Set bind address if specified
+if bashio::config.has_value 'bind_address'; then
+    BIND_ADDRESS=$(bashio::config 'bind_address')
+    export BIND_ADDRESS="${BIND_ADDRESS}"
+    bashio::log.info "BamBuddy binding to address: ${BIND_ADDRESS}"
+fi
+
+# Redirect data and logs to HA persistent storage
+# /data and /config/addon_configs/bambuddy are persisted by HA Supervisor
+mkdir -p /data/bambuddy_data /data/bambuddy_logs
+
+# Symlink BamBuddy's data and logs dirs to HA persistent storage
+if [ ! -L /app/data ]; then
+    rm -rf /app/data
+    ln -s /data/bambuddy_data /app/data
+fi
+if [ ! -L /app/logs ]; then
+    rm -rf /app/logs
+    ln -s /data/bambuddy_logs /app/logs
+fi
+
+# Ensure correct ownership
+chown -R 1000:1000 /data/bambuddy_data /data/bambuddy_logs
+
+# Port (always 8000 in addon context)
+export PORT=8000
+
+bashio::log.info "Starting BamBuddy..."
+bashio::log.info "Web UI available at http://$(hostname):8000"
+
+# Run entrypoint then start uvicorn, exactly as the official image does
+exec /usr/local/bin/docker-entrypoint.sh \
+    sh -c "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT} --loop asyncio"

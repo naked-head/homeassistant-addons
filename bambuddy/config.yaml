@@ -1,0 +1,35 @@
+name: BamBuddy
+version: "0.2.4.3"
+slug: bambuddy
+description: Self-hosted command center for Bambu Lab printers. No cloud required.
+url: https://github.com/naked-head/ha-addon-bambuddy
+arch:
+  - aarch64
+  - amd64
+init: false
+homeassistant_api: false
+host_network: true
+privileged:
+  - NET_BIND_SERVICE
+map:
+  - addon_config:rw
+  - data:rw
+ports:
+  8000/tcp: 8000
+  1883/tcp: 1883
+  8883/tcp: 8883
+  2222/tcp: 2222
+ports_description:
+  8000/tcp: BamBuddy Web UI
+  1883/tcp: MQTT (Virtual Printer)
+  8883/tcp: MQTT over TLS (Virtual Printer)
+  2222/tcp: SFTP (Virtual Printer)
+options:
+  bind_address: ""
+  timezone: "Europe/Rome"
+  log_level: "info"
+schema:
+  bind_address: "str?"
+  timezone: "str"
+  log_level: "list(trace|debug|info|notice|warning|error|fatal)"
+image: ghcr.io/maziggy/bambuddy
