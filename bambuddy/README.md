@@ -6,7 +6,7 @@
 
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]
-[![License][license-shield]](LICENSE)
+![license-shield]: https://img.shields.io/badge/license-MIT-green.svg
 
 Self-hosted command center for Bambu Lab printers. Manage your entire printer farm locally — no Bambu Cloud required.
 
