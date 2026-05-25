@@ -1,5 +1,5 @@
 {
-  name: BamBuddy Add-on Repository
-  url: https://github.com/naked-head/ha-addon-bambuddy
-  maintainer: naked-head
+  "name": "BamBuddy Add-on Repository",
+  "url": "https://github.com/naked-head/ha-addon-bambuddy",
+  "maintainer": "naked-head"
 }
