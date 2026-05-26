@@ -23,8 +23,12 @@ if [ ! -L /app/logs ]; then
     ln -s /data/bambuddy_logs /app/logs
 fi
 
+# Fix finish permissions at runtime
+chmod +x /etc/services.d/bambuddy/finish 2>/dev/null || true
+
 export PORT=8000
 export PYTHONPATH=/app
+export PYTHONUNBUFFERED=1
 
 bashio::log.info "Starting BamBuddy on port ${PORT}..."
 
