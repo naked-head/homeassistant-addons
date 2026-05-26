@@ -20,14 +20,17 @@ COPY --from=builder /app/requirements.txt ./
 RUN sed -i 's/opencv-python-headless/# opencv-python-headless/' requirements.txt && \
     pip install --root-user-action=ignore --break-system-packages -r requirements.txt
 
-# Copy application code only (no entrypoint, no gosu)
-COPY --from=builder /app /app
+# Copy application code only — explicitly exclude entrypoint and gosu
+COPY --from=builder /app/backend /app/backend
+COPY --from=builder /app/static /app/static
+COPY --from=builder /app/gcode_viewer /app/gcode_viewer
 
 ENV PYTHONUNBUFFERED=1
 ENV DATA_DIR=/app/data
 ENV LOG_DIR=/app/logs
 
-# Copy S6 run scripts
+# Copy S6 run scripts — must come after app copy
+ARG CACHE_BUST=1
 COPY rootfs /
 
 # Web UI
