@@ -8,3 +8,7 @@
 - Persistent storage via HA Supervisor data volume
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
+
+## 1.0.1
+
+- Add Instruction for certificate in README.md

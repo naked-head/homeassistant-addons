@@ -48,23 +48,53 @@ Self-hosted command center for Bambu Lab printers. Manage your entire printer fa
 
 > **Note:** Port 8883 is also used by MQTT brokers. If you already run Mosquitto or another broker on this port, configure a separate IP alias and set `bind_address` accordingly.
 
-## Home Assistant Panel
+## Add BamBuddy to the Home Assistant sidebar
 
-Since BamBuddy's web interface cannot be embedded via HA Ingress (due to SPA architecture constraints), you can add it as a sidebar panel:
+Since BamBuddy's web interface cannot be embedded via HA Ingress, you can add it as a sidebar panel:
 
 1. Go to **Settings → Dashboards**.
-2. Click **Add Dashboard** and choose **Webpage**.
-3. Set the URL to `http://<your-ha-ip>:8000`.
-4. It will appear in your sidebar.
+2. Click **Add Dashboard** in the bottom right.
+3. Choose **Webpage**.
+4. Fill in the fields:
+   - **Title**: `BamBuddy`
+   - **Icon**: `mdi:printer-3d`
+   - **URL**: `http://<your-ha-ip>:8000`
+5. Click **Create** — BamBuddy will appear in your sidebar.
 
-## Virtual Printer & BambuStudio
+## Virtual Printer setup
 
-To use Virtual Printer with BambuStudio, you need to add BamBuddy's CA certificate to the slicer. See the [official documentation](https://wiki.bambuddy.cool/features/virtual-printer/) for instructions.
+### Step 1 — Create a virtual printer in BamBuddy
 
-If you use BambuStudio installed via **Flatpak**, the certificate file is at:
+1. Open BamBuddy at `http://<your-ha-ip>:8000`
+2. Go to **Virtual Printers** and create a new printer
+3. Note the IP, serial number and access code assigned to the virtual printer
+
+### Step 2 — Download the CA certificate
+
+1. In BamBuddy go to **Settings → Virtual Printer**
+2. Download the **CA Certificate** (`bbl_ca.crt`)
+
+### Step 3 — Add the certificate to BambuStudio
+
+Open BambuStudio and append the contents of `bbl_ca.crt` to the slicer certificate file.
+
+**Standard installation:**
+```
+<BambuStudio install path>/resources/cert/printer.cer
+```
+
+**Flatpak installation:**
 ```
 /var/lib/flatpak/app/com.bambulab.BambuStudio/current/active/files/share/BambuStudio/resources/cert/printer.cer
 ```
+
+> **Note:** If you update BambuStudio via Flatpak, you will need to re-add the certificate as updates overwrite `printer.cer`.
+
+### Step 4 — Add the virtual printer in BambuStudio
+
+1. In BambuStudio go to **Device → Add Printer**
+2. Select **Add a new Bambu Lab printer**
+3. Enter the IP, serial number and access code from Step 1
 
 ## Support
 
