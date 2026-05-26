@@ -83,9 +83,10 @@ Open BambuStudio and append the contents of `bbl_ca.crt` to the slicer certifica
 <BambuStudio install path>/resources/cert/printer.cer
 ```
 
-**Flatpak installation:**
+**Flatpak installation possible path:**
 ```
 /var/lib/flatpak/app/com.bambulab.BambuStudio/current/active/files/share/BambuStudio/resources/cert/printer.cer
+/var/lib/flatpak/app/com.bambulab.BambuStudio/current/active/files/share/BambuStudio/cert/printer.cer
 ```
 
 > **Note:** If you update BambuStudio via Flatpak, you will need to re-add the certificate as updates overwrite `printer.cer`.
