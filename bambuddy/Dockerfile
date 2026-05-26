@@ -32,6 +32,7 @@ ENV LOG_DIR=/app/logs
 # Copy S6 run scripts — must come after app copy
 ARG CACHE_BUST=1
 COPY rootfs /
+RUN chmod +x /etc/services.d/bambuddy/run /etc/services.d/bambuddy/finish
 
 # Web UI
 EXPOSE 8000/tcp
