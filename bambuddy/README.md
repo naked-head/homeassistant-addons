@@ -17,7 +17,7 @@ Self-hosted command center for Bambu Lab printers. Manage your entire printer fa
 ## Installation
 
 1. Add this repository to your Home Assistant add-on store:
-   `https://github.com/naked-head/ha-addon-bambuddy`
+   `https://github.com/naked-head/homeassistant-addons`
 2. Install the **BamBuddy** add-on.
 3. Configure the options (see below).
 4. Start the add-on.
@@ -135,7 +135,7 @@ Replace `https://your-ha-domain.com` with the URL you use to access Home Assista
 ## Support
 - [BamBuddy Documentation](https://wiki.bambuddy.cool)
 - [BamBuddy GitHub](https://github.com/maziggy/bambuddy)
-- [Add-on GitHub](https://github.com/naked-head/ha-addon-bambuddy)
+- [Add-on GitHub](https://github.com/naked-head/homeassistant-addons)
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg

@@ -4,5 +4,5 @@ build_from:
 labels:
   org.opencontainers.image.title: BamBuddy
   org.opencontainers.image.description: Self-hosted command center for Bambu Lab printers
-  org.opencontainers.image.source: https://github.com/naked-head/ha-addon-bambuddy
+  org.opencontainers.image.source: https://github.com/naked-head/homeassistant-addons
   org.opencontainers.image.licenses: MIT

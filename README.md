@@ -1,22 +1,16 @@
-# BamBuddy Home Assistant Add-on Repository
-
-<p align="center">
-  <img src="https://bambuddy.cool/assets/img/logo_transparent.png" alt="BamBuddy" width="300">
-</p>
+# Home Assistant Add-ons
 
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]
 
-## About
-
-This repository contains the Home Assistant add-on for [BamBuddy](https://bambuddy.cool) — a self-hosted command center for Bambu Lab printers. No cloud required.
+A collection of Home Assistant add-ons.
 
 ## Installation
 
 1. Navigate to **Settings → Add-ons → Add-on Store** in Home Assistant.
 2. Click the three-dot menu in the top right and select **Repositories**.
-3. Add the following URL: `https://github.com/naked-head/ha-addon-bambuddy`
-4. Find the **BamBuddy** add-on in the store and click **Install**.
+3. Add the following URL: `https://github.com/naked-head/homeassistant-addons`
+4. Find the add-on you want in the store and click **Install**.
 
 ## Add-ons
 
