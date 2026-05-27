@@ -97,8 +97,42 @@ Open BambuStudio and append the contents of `bbl_ca.crt` to the slicer certifica
 2. Select **Add a new Bambu Lab printer**
 3. Enter the IP, serial number and access code from Step 1
 
-## Support
+Embed BamBuddy in the Home Assistant sidebar via Cloudflare
 
+If you access Home Assistant via HTTPS and use Cloudflare Tunnel for BamBuddy, you need to allow HA to embed BamBuddy in an iframe. By default BamBuddy sets a `Content-Security-Policy` header that blocks embedding.
+
+### Step 1 — Create a Cloudflare Transform Rule
+
+1. Go to **Cloudflare Dashboard → your domain → Rules → Overview**
+2. Click **Create rule** and select **Response Header Transform Rule**
+3. Give the rule a name (e.g. `BamBuddy iframe`)
+4. Configure the rule:
+
+**When incoming requests match:**
+- Field: `Hostname`
+- Operator: `equals`
+- Value: `bambuddy.yourdomain.com`
+
+**Then modify response header:**
+- Operation: `Set`
+- Header name: `Content-Security-Policy`
+- Value: `frame-ancestors 'self' https://your-ha-domain.com`
+
+Replace `https://your-ha-domain.com` with the URL you use to access Home Assistant.
+
+5. Click **Deploy**
+
+### Step 2 — Add BamBuddy to the sidebar
+
+1. Go to **Settings → Dashboards**
+2. Click **Add Dashboard** → **Webpage**
+3. Fill in the fields:
+   - **Title**: `BamBuddy`
+   - **Icon**: `mdi:printer-3d`
+   - **URL**: `https://bambuddy.yourdomain.com`
+4. Click **Create**
+
+## Support
 - [BamBuddy Documentation](https://wiki.bambuddy.cool)
 - [BamBuddy GitHub](https://github.com/maziggy/bambuddy)
 - [Add-on GitHub](https://github.com/naked-head/ha-addon-bambuddy)
