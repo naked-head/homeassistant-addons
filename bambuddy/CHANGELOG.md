@@ -12,3 +12,7 @@
 ## 1.0.1
 
 - Add Instruction for certificate in README.md
+
+## 1.0.2
+
+- Updated BamBuddy to v0.2.4.4
