@@ -1,0 +1,27 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Bambu Studio API
+version: "0.1.2"
+slug: bambu_studio_api
+stage: stable
+description: Headless Bambu Studio CLI as a REST API. Sidecar for Bambuddy server-side slicing.
+url: "https://github.com/griffinmartin/ha-app-bambu-studio-api"
+# Pre-built image published by .github/workflows/builder.yml. HA will pull
+# this first and only fall back to building the Dockerfile locally if the
+# pull fails (e.g. before the first CI run completes).
+image: "ghcr.io/griffinmartin/ha-app-bambu-studio-api-{arch}"
+arch:
+  - amd64
+init: false
+host_network: false
+ports:
+  "3000/tcp": 3001
+ports_description:
+  "3000/tcp": "Bambu Studio API (REST + /health). Default 3001 matches the Bambuddy wiki."
+map:
+  - addon_config:rw
+options:
+  debug: false
+schema:
+  debug: bool
+webui: "http://[HOST]:[PORT:3000]/health"
+watchdog: "http://[HOST]:[PORT:3000]/health"

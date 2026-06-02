@@ -1,0 +1,13 @@
+configuration:
+  debug:
+    name: Debug logging
+    description: >-
+      Enable verbose Express debug logging from the Node wrapper. Only turn
+      this on while diagnosing a slice failure; it produces a lot of output.
+network:
+  3000/tcp:
+    title: Bambu Studio API
+    description: >-
+      Host port for the REST API and the /health endpoint. The Bambuddy wiki's
+      default is 3001 — change it here only if 3001 collides with another
+      service on your HA host.

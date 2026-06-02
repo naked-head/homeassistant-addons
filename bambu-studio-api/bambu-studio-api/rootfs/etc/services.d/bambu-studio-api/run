@@ -1,0 +1,30 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the Bambu Studio API sidecar.
+# s6-overlay docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+set -e
+
+declare debug
+debug=$(bashio::config 'debug')
+
+bashio::log.info 'Linking persistent data directory'
+mkdir -p /config/data
+
+# Bind /data (what the wrapper reads via DATA_PATH) to /config/data
+# (what HA exposes as addon_configs/<slug>_bambu_studio_api/data) so all
+# uploaded profiles, presets and bundles survive add-on updates.
+if [ ! -L /data ]; then
+    rm -rf /data || true
+    ln -s /config/data /data
+fi
+
+if [ "${debug}" = "true" ]; then
+    bashio::log.info 'Debug logging ON (DEBUG=express:*)'
+    export DEBUG="express:*"
+fi
+
+cd /app
+
+bashio::log.info "Starting Bambu Studio API on container port ${PORT}"
+exec node dist/index.js
