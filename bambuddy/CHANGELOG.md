@@ -16,3 +16,7 @@
 ## 1.0.2
 
 - Updated BamBuddy to v0.2.4.4
+
+## 1.0.3
+
+- Updated BamBuddy to v0.2.4.5
