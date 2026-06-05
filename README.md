@@ -18,5 +18,8 @@ A collection of Home Assistant apps.
 
 Self-hosted command center for Bambu Lab printers. Manage your entire printer farm locally, without Bambu Cloud.
 
+### [Bambu Studio API](./bambu-studio-api)
+Headless Bambu Studio CLI wrapped in a REST API. Sidecar for Bambuddy server-side slicing — lets Bambuddy dispatch slice jobs without a desktop slicer install. amd64 only.
+
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
