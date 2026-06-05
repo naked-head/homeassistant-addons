@@ -1,0 +1,70 @@
+name: Update Bambu Studio API
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # ogni lunedì alle 6:00 UTC
+  workflow_dispatch:       # eseguibile anche manualmente
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Get latest BambuStudio release
+        id: upstream
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/bambulab/BambuStudio/releases/latest \
+            | jq -r '.tag_name' | sed 's/^v//')
+          echo "version=$LATEST" >> $GITHUB_OUTPUT
+
+      - name: Get current version from Dockerfile
+        id: current
+        run: |
+          CURRENT=$(grep 'ARG BAMBU_VERSION=' bambu-studio-api/Dockerfile \
+            | sed 's/ARG BAMBU_VERSION=//')
+          echo "version=$CURRENT" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        id: compare
+        run: |
+          if [ "${{ steps.upstream.outputs.version }}" != "${{ steps.current.outputs.version }}" ]; then
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Dockerfile and config.yaml
+        if: steps.compare.outputs.update_needed == 'true'
+        run: |
+          NEW_VER="${{ steps.upstream.outputs.version }}"
+
+          # Aggiorna BAMBU_VERSION nel Dockerfile
+          sed -i "s/ARG BAMBU_VERSION=.*/ARG BAMBU_VERSION=${NEW_VER}/" \
+            bambu-studio-api/Dockerfile
+
+          # Aggiorna la versione dell'add-on in config.yaml
+          # Usa la versione upstream come versione dell'add-on
+          sed -i "s/^version:.*/version: \"${NEW_VER}\"/" \
+            bambu-studio-api/config.yaml
+
+      - name: Open Pull Request
+        if: steps.compare.outputs.update_needed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update/bambu-studio-${{ steps.upstream.outputs.version }}
+          commit-message: "chore: bump Bambu Studio to ${{ steps.upstream.outputs.version }}"
+          title: "Update Bambu Studio API to ${{ steps.upstream.outputs.version }}"
+          body: |
+            Automated update: bumps `BAMBU_VERSION` in `bambu-studio-api/Dockerfile`
+            and `version` in `bambu-studio-api/config.yaml` to match the latest
+            [BambuStudio release](https://github.com/bambulab/BambuStudio/releases/tag/${{ steps.upstream.outputs.version }}).
+
+            Merge this PR to make the update available in your HA add-on repository.
+          labels: automated, dependencies

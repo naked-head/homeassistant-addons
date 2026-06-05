@@ -82,16 +82,15 @@ and reinstalls (as long as you opt to keep add-on data on uninstall).
 
 ---
 
-## Updating the bundled Bambu Studio version
+## Updates
 
-The Bambu Studio AppImage version is pinned at build time via the `BAMBU_VERSION`
-build-arg in the `Dockerfile`. To bump it:
+Bambu Studio version bumps are handled automatically via a GitHub Actions workflow
+that runs weekly. When a new [BambuStudio release](https://github.com/bambulab/BambuStudio/releases)
+is detected, a Pull Request is opened against this repository with the updated
+`Dockerfile`, `config.yaml`, and `CHANGELOG.md`. Once the PR is merged, Home
+Assistant will offer the new version as a regular add-on update.
 
-1. Edit `bambu-studio-api/Dockerfile` and update `BAMBU_VERSION`.
-2. Bump the add-on `version` in `bambu-studio-api/config.yaml`.
-3. Add a `CHANGELOG.md` entry.
-
-Home Assistant will then offer the new version as a regular add-on update.
+No manual intervention is needed beyond merging the PR.
 
 ---
 
