@@ -8,7 +8,7 @@ url: "https://github.com/griffinmartin/ha-app-bambu-studio-api"
 # Pre-built image published by .github/workflows/builder.yml. HA will pull
 # this first and only fall back to building the Dockerfile locally if the
 # pull fails (e.g. before the first CI run completes).
-#image: "ghcr.io/griffinmartin/ha-app-bambu-studio-api-{arch}"
+image: "ghcr.io/naked-head/ha-app-bambu-studio-api-{arch}"
 arch:
   - amd64
 init: false
