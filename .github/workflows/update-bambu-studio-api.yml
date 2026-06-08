@@ -71,6 +71,7 @@ jobs:
           branch: update/bambu-studio-${{ steps.upstream.outputs.version }}
           commit-message: "chore: bump Bambu Studio to ${{ steps.upstream.outputs.version }}"
           title: "Update Bambu Studio API to ${{ steps.upstream.outputs.version }}"
+          delete-branch: true
           body: |
             Automated update: bumps `BAMBU_VERSION` in `bambu-studio-api/Dockerfile`
             and `version` in `bambu-studio-api/config.yaml` to match the latest
