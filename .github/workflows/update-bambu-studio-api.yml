@@ -59,8 +59,9 @@ jobs:
             | sed -E 's/version:[[:space:]]*"?([^"]+)"?/\1/')
 
           ENTRY="## ${ADDON_VER} - ${DATE}\nBump Bambu Studio from ${OLD_VER} to ${NEW_VER}.\n"
-          echo -e "${ENTRY}\n$(cat bambu-studio-api/CHANGELOG.md)" \
-            > bambu-studio-api/CHANGELOG.md
+          FIRST=$(head -1 bambu-studio-api/CHANGELOG.md)
+          REST=$(tail -n +2 bambu-studio-api/CHANGELOG.md)
+          echo -e "${FIRST}\n\n${ENTRY}\n${REST}" > bambu-studio-api/CHANGELOG.md
 
       - name: Open Pull Request
         if: steps.compare.outputs.update_needed == 'true'
