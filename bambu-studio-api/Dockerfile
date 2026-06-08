@@ -44,9 +44,9 @@ RUN echo "Downloading BambuStudio v${BAMBU_VERSION}..." \
     && rm bambu.AppImage
 RUN npm ci && npm run build
 # ---------------------------------------------------------------------------
-# Stage 2: runtime image (Ubuntu 22.04 + Node 22 + s6-overlay + bashio)
+# Stage 2: runtime image (Ubuntu 24.04 + Node 22 + s6-overlay + bashio)
 # ---------------------------------------------------------------------------
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 ARG S6_OVERLAY_VERSION=3.2.0.2
 ARG BASHIO_VERSION=v0.16.2
 ARG TARGETARCH
@@ -64,7 +64,7 @@ RUN apt-get update \
         libsm6 libice6 libmspack0 libsoup2.4-1 \
         libgtk-3-0 \
         libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
-        libwebkit2gtk-4.0-37 \
+        libwebkit2gtk-4.1-0 \
     && mkdir -p /etc/apt/keyrings \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
          | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
