@@ -13,7 +13,7 @@
 # amd64 only: BambuLab does not publish an official ARM64 AppImage and the
 # upstream Dockerfile.bambu-studio fails fast on arm64 — we mirror that here.
 
-ARG BAMBU_VERSION=02.06.00.51
+ARG BAMBU_VERSION=02.07.01.57
 ARG UPSTREAM_REF=bambuddy/profile-resolver
 
 # ---------------------------------------------------------------------------
