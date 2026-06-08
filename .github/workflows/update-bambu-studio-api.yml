@@ -55,7 +55,7 @@ jobs:
 
       - name: Open Pull Request
         if: steps.compare.outputs.update_needed == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: update/bambu-studio-${{ steps.upstream.outputs.version }}
