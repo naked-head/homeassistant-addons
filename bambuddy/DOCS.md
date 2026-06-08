@@ -1,8 +1,8 @@
 # BamBuddy – Documentation
 
-This add-on wraps the official [BamBuddy](https://bambuddy.cool) Docker image as a native Home Assistant Supervisor add-on, providing local management of Bambu Lab printers without Bambu Cloud.
+This app wraps the official [BamBuddy](https://bambuddy.cool) Docker image as a native Home Assistant Supervisor app, providing local management of Bambu Lab printers without Bambu Cloud.
 
-This add-on is part of the [`naked-head/homeassistant-addons`](https://github.com/naked-head/homeassistant-addons) collection.
+This app is part of the [`naked-head/homeassistant-addons`](https://github.com/naked-head/homeassistant-addons) collection.
 
 ---
 

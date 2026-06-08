@@ -1,4 +1,4 @@
-# BamBuddy – Home Assistant Add-on
+# BamBuddy – Home Assistant App
 
 <p align="center">
   <img src="https://bambuddy.cool/assets/img/logo_transparent.png" alt="BamBuddy" width="300">
@@ -8,9 +8,9 @@
 ![Supports amd64 Architecture][amd64-shield]
 [![License][license-shield]](LICENSE)
 
-A Home Assistant add-on that runs [BamBuddy](https://bambuddy.cool) — a self-hosted command center for Bambu Lab printers. Manage your entire printer farm locally, without Bambu Cloud.
+A Home Assistant app that runs [BamBuddy](https://bambuddy.cool) — a self-hosted command center for Bambu Lab printers. Manage your entire printer farm locally, without Bambu Cloud.
 
-This add-on is part of the [`naked-head/homeassistant-addons`](https://github.com/naked-head/homeassistant-addons) collection.
+This app is part of the [`naked-head/homeassistant-addons`](https://github.com/naked-head/homeassistant-addons) collection.
 
 ---
 
