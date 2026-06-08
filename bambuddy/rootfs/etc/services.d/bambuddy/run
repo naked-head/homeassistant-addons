@@ -26,6 +26,12 @@ fi
 # Fix finish permissions at runtime
 chmod +x /etc/services.d/bambuddy/finish 2>/dev/null || true
 
+if bashio::config.has_value 'trusted_frame_origins'; then
+    TRUSTED_FRAME_ORIGINS=$(bashio::config 'trusted_frame_origins')
+    export TRUSTED_FRAME_ORIGINS="${TRUSTED_FRAME_ORIGINS}"
+    bashio::log.info "Trusted frame origins: ${TRUSTED_FRAME_ORIGINS}"
+fi
+
 export PORT=8000
 export PYTHONPATH=/app
 export PYTHONUNBUFFERED=1

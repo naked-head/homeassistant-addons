@@ -1,2 +1,0 @@
-#!/usr/bin/with-contenv bashio
-bashio::log.info "BamBuddy stopped."
