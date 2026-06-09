@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5
+
+- Updated BamBuddy to v0.2.4.6
+- Narrowed FTP passive port range from 50000-50100 to 50000-50029
+
 ## 1.0.4
 
 - Added Configuration option: "Trusted Frame Origin"

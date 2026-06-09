@@ -30,7 +30,7 @@ ENV DATA_DIR=/app/data
 ENV LOG_DIR=/app/logs
 
 # Copy S6 run scripts — must come after app copy
-ARG CACHE_BUST=5
+ARG CACHE_BUST=6
 COPY rootfs /
 RUN chmod +x /etc/services.d/bambuddy/run /etc/services.d/bambuddy/finish
 
@@ -46,4 +46,4 @@ EXPOSE 990/tcp
 EXPOSE 2024/tcp
 EXPOSE 2025/tcp
 EXPOSE 2026/tcp
-EXPOSE 50000-50100/tcp
+EXPOSE 50000-50029/tcp
