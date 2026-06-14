@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Updated BamBuddy to v0.2.4.7
+
 ## 1.0.5
 
 - Updated BamBuddy to v0.2.4.6
