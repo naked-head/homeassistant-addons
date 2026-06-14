@@ -30,7 +30,7 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | 322 | TCP | RTSP camera streaming (X1/H2/P2) |
 | 990 | TCP | FTPS control |
 | 2024-2026 | TCP | Proprietary slicer ports (A1/P1S) |
-| 50000-50100 | TCP | FTP passive data |
+| 50000-50029 | TCP | FTP passive data |
 
 > **Note:** Port 8883 is also used by MQTT brokers. If you already run Mosquitto or another broker on this port, configure a separate IP alias on your network interface and set `bind_address` to that alias.
 
