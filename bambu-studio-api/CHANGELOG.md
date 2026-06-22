@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7 - 2026-06-22
+- Revert Bambu Studio from 02.07.01.62 to 02.07.01.57: v02.07.01.62 ships no Linux AppImage.
+- Harden AppImage URL detection: match any Ubuntu asset instead of pinning to `ubuntu-22.04` naming.
+- Add explicit error message when no AppImage asset is found for the requested version.
+- Fix `url` in config.yaml pointing to upstream fork instead of this repository.
+
 ## 0.1.6 - 2026-06-22
 Bump Bambu Studio from 02.07.01.57 to 02.07.01.62.
 

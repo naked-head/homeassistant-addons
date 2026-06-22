@@ -12,7 +12,7 @@
 #
 # amd64 only: BambuLab does not publish an official ARM64 AppImage and the
 # upstream Dockerfile.bambu-studio fails fast on arm64 — we mirror that here.
-ARG BAMBU_VERSION=02.07.01.62
+ARG BAMBU_VERSION=02.07.01.57
 ARG UPSTREAM_REF=bambuddy/profile-resolver
 # ---------------------------------------------------------------------------
 # Stage 1: build the Node wrapper + extract the Bambu Studio AppImage
@@ -35,8 +35,13 @@ RUN git clone --depth 1 --branch "${UPSTREAM_REF}" \
 RUN echo "Downloading BambuStudio v${BAMBU_VERSION}..." \
     && APPIMAGE_URL=$(curl -s "https://api.github.com/repos/bambulab/BambuStudio/releases/tags/v${BAMBU_VERSION}" \
         | jq -r '.assets[].browser_download_url' \
-        | grep 'ubuntu-22.04' \
-        | grep '\.AppImage$') \
+        | grep -i 'ubuntu' \
+        | grep '\.AppImage$' \
+        | head -n1) \
+    && if [ -z "${APPIMAGE_URL}" ]; then \
+        echo "ERROR: No Linux AppImage found for v${BAMBU_VERSION}. Check https://github.com/bambulab/BambuStudio/releases/tag/v${BAMBU_VERSION}"; \
+        exit 1; \
+    fi \
     && echo "URL: ${APPIMAGE_URL}" \
     && curl -fL -o bambu.AppImage "${APPIMAGE_URL}" \
     && chmod +x bambu.AppImage \
