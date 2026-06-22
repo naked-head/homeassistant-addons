@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 - 2026-06-22
+Bump Bambu Studio from 02.07.01.57 to 02.07.01.62.
+
+
 ## 0.1.5 - 2026-06-08
 Fix dependencies for Bambu Studio 02.07.01.57
 
