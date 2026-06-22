@@ -2,8 +2,8 @@ name: Update Bambu Studio API
 
 on:
   schedule:
-    - cron: '0 6 * * 1'  # ogni lunedì alle 6:00 UTC
-  workflow_dispatch:       # eseguibile anche manualmente
+    - cron: '0 6 * * *'  # ogni giorno alle 6:00 UTC
+  workflow_dispatch:
 
 jobs:
   check-and-update:
@@ -16,12 +16,20 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Get latest BambuStudio release
+      - name: Get latest BambuStudio release with Linux AppImage
         id: upstream
         run: |
           LATEST=$(curl -s https://api.github.com/repos/bambulab/BambuStudio/releases/latest \
             | jq -r '.tag_name' | sed 's/^v//')
-          echo "version=$LATEST" >> $GITHUB_OUTPUT
+          HAS_APPIMAGE=$(curl -s "https://api.github.com/repos/bambulab/BambuStudio/releases/tags/v${LATEST}" \
+            | jq -r '.assets[].browser_download_url' \
+            | grep -i 'ubuntu' | grep '\.AppImage$' | head -n1)
+          if [ -z "$HAS_APPIMAGE" ]; then
+            echo "No Linux AppImage for v${LATEST}, skipping."
+            echo "version=" >> $GITHUB_OUTPUT
+          else
+            echo "version=$LATEST" >> $GITHUB_OUTPUT
+          fi
 
       - name: Get current version from Dockerfile
         id: current
@@ -33,7 +41,8 @@ jobs:
       - name: Compare versions
         id: compare
         run: |
-          if [ "${{ steps.upstream.outputs.version }}" != "${{ steps.current.outputs.version }}" ]; then
+          if [ -n "${{ steps.upstream.outputs.version }}" ] && \
+             [ "${{ steps.upstream.outputs.version }}" != "${{ steps.current.outputs.version }}" ]; then
             echo "update_needed=true" >> $GITHUB_OUTPUT
           else
             echo "update_needed=false" >> $GITHUB_OUTPUT
