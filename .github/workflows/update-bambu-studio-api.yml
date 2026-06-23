@@ -21,9 +21,11 @@ jobs:
         run: |
           LATEST=$(curl -s https://api.github.com/repos/bambulab/BambuStudio/releases/latest \
             | jq -r '.tag_name' | sed 's/^v//')
+          echo "Latest version: ${LATEST}"
           HAS_APPIMAGE=$(curl -s "https://api.github.com/repos/bambulab/BambuStudio/releases/tags/v${LATEST}" \
             | jq -r '.assets[].browser_download_url' \
             | grep -i 'ubuntu' | grep '\.AppImage$' | head -n1)
+          echo "AppImage URL found: '${HAS_APPIMAGE}'"
           if [ -z "$HAS_APPIMAGE" ]; then
             echo "No Linux AppImage for v${LATEST}, skipping."
             echo "version=" >> $GITHUB_OUTPUT
