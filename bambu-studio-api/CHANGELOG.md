@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 - 2026-06-23
+Bump Bambu Studio from 02.07.01.57 to 02.07.01.62.
+
+
 ## 0.1.7 - 2026-06-22
 - Revert Bambu Studio from 02.07.01.62 to 02.07.01.57: v02.07.01.62 ships no Linux AppImage.
 - Harden AppImage URL detection: match any Ubuntu asset instead of pinning to `ubuntu-22.04` naming.
