@@ -3,6 +3,7 @@
 ## 1.0.7
 
 - Updated BamBuddy to v0.2.4.8
+- Full BamBuddy release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.8
 
 ## 1.0.6
 
