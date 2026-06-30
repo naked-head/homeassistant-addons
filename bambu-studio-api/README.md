@@ -85,7 +85,7 @@ and reinstalls (as long as you opt to keep add-on data on uninstall).
 ## Updates
 
 Bambu Studio version bumps are handled automatically via a GitHub Actions workflow
-that runs weekly. When a new [BambuStudio release](https://github.com/bambulab/BambuStudio/releases)
+that runs daily. When a new [BambuStudio release](https://github.com/bambulab/BambuStudio/releases)
 is detected, a Pull Request is opened against this repository with the updated
 `Dockerfile`, `config.yaml`, and `CHANGELOG.md`. Once the PR is merged, Home
 Assistant will offer the new version as a regular add-on update.
