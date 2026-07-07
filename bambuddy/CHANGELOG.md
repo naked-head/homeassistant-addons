@@ -55,11 +55,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 [Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.8...HEAD
 [1.0.8]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.7...bambuddy-v1.0.8
-[1.0.7]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.6...bambuddy-v1.0.7
-[1.0.6]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.5...bambuddy-v1.0.6
-[1.0.5]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.4...bambuddy-v1.0.5
-[1.0.4]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.3...bambuddy-v1.0.4
-[1.0.3]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.2...bambuddy-v1.0.3
-[1.0.2]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.1...bambuddy-v1.0.2
-[1.0.1]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.0...bambuddy-v1.0.1
-[1.0.0]: https://github.com/naked-head/homeassistant-addons/releases/tag/bambuddy-v1.0.0
+[1.0.7]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy?before=bambuddy-v1.0.8
+[1.0.6]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
+[1.0.5]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
+[1.0.4]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
+[1.0.3]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
+[1.0.2]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
+[1.0.1]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
+[1.0.0]: https://github.com/naked-head/homeassistant-addons/commits/main/bambuddy
