@@ -32,6 +32,45 @@ if bashio::config.has_value 'trusted_frame_origins'; then
     bashio::log.info "Trusted frame origins: ${TRUSTED_FRAME_ORIGINS}"
 fi
 
+# Home Assistant integration.
+# If ha_url/ha_token are not set, fall back to the Supervisor's internal
+# Core API proxy (available because homeassistant_api: true in config.yaml
+# makes the Supervisor inject SUPERVISOR_TOKEN into this container).
+if bashio::config.has_value 'ha_url'; then
+    HA_URL=$(bashio::config 'ha_url')
+else
+    HA_URL="http://supervisor/core"
+fi
+export HA_URL
+bashio::log.info "Home Assistant URL: ${HA_URL}"
+
+if bashio::config.has_value 'ha_token'; then
+    HA_TOKEN=$(bashio::config 'ha_token')
+else
+    HA_TOKEN="${SUPERVISOR_TOKEN}"
+fi
+export HA_TOKEN
+
+if bashio::config.has_value 'database_url'; then
+    DATABASE_URL=$(bashio::config 'database_url')
+    export DATABASE_URL="${DATABASE_URL}"
+    bashio::log.info "Using external PostgreSQL database"
+fi
+
+# BAMBUDDY_EXTERNAL_ROOTS wants a colon-separated list of in-container paths.
+# Map/media are mounted via config.yaml (share:rw, media:rw) so /share/... and
+# /media/... are valid entries.
+BAMBUDDY_EXTERNAL_ROOTS=$(bashio::jq "$(bashio::addon_config)" '.bambuddy_external_roots // [] | join(":")')
+if [ -n "${BAMBUDDY_EXTERNAL_ROOTS}" ]; then
+    export BAMBUDDY_EXTERNAL_ROOTS
+    bashio::log.info "External roots: ${BAMBUDDY_EXTERNAL_ROOTS}"
+fi
+
+if bashio::config.true 'use_system_trust_store'; then
+    export USE_SYSTEM_TRUST_STORE="true"
+    bashio::log.info "System trust store enabled"
+fi
+
 export PORT=8000
 export PYTHONPATH=/app
 export PYTHONUNBUFFERED=1

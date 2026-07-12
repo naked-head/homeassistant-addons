@@ -21,3 +21,37 @@ configuration:
       Space-separated list of origins allowed to embed BamBuddy in an iframe
       (e.g. http://192.168.1.100:8123 https://ha.yourdomain.com).
       Required to use BamBuddy as a Home Assistant sidebar webpage panel.
+  ha_url:
+    name: Home Assistant URL
+    description: >-
+      URL of the Home Assistant instance BamBuddy should talk to (e.g. for
+      power/energy sensor automations). Leave empty to use this Supervisor's
+      own Core API automatically — no need to set this on a normal HA
+      Supervised/OS install.
+  ha_token:
+    name: Home Assistant Long-Lived Token
+    description: >-
+      Long-lived access token for the Home Assistant instance set in Home
+      Assistant URL. Leave empty to use the Supervisor's own token
+      automatically — only needed if Home Assistant URL points to a
+      different, external HA instance.
+  database_url:
+    name: External Database URL
+    description: >-
+      Optional external PostgreSQL connection string (e.g.
+      postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy). Leave
+      empty to use BamBuddy's built-in SQLite database.
+  bambuddy_external_roots:
+    name: External Library Folders
+    description: >-
+      In-container paths that File Manager users are allowed to add as
+      external folders (e.g. /share/3dprints, /media/nas). Paths must live
+      under /share or /media, since those are the only folders this add-on
+      mounts from the Home Assistant host. Leave empty to disable the
+      feature.
+  use_system_trust_store:
+    name: Use System Trust Store
+    description: >-
+      Enable this if BamBuddy needs to validate a self-signed certificate,
+      for example when Home Assistant URL points to a Home Assistant instance
+      using a self-signed HTTPS certificate.

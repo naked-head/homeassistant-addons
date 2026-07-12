@@ -40,10 +40,16 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 
 | Option | Default | Description |
 |---|---|---|
-| `bind_address` | *(empty)* | IP to bind to. Leave empty for all interfaces, or set a specific IP alias (e.g. `192.168.50.53`) |
+| `bind_address` | *(unset)* | IP to bind to. Leave unset for all interfaces, or set a specific IP alias (e.g. `192.168.50.53`) |
 | `timezone` | `Europe/Rome` | Your local timezone |
 | `log_level` | `info` | Log verbosity: `trace`, `debug`, `info`, `warning`, `error` |
-| `trusted_frame_origins` | *(empty)* | Space-separated list of origins allowed to embed BamBuddy in an iframe (e.g. `http://192.168.1.100:8123 https://ha.yourdomain.com`) |
+| `trusted_frame_origins` | *(unset)* | Space-separated list of origins allowed to embed BamBuddy in an iframe (e.g. `http://192.168.1.100:8123 https://ha.yourdomain.com`) |
+| `ha_url` / `ha_token` | *(unset)* | Point BamBuddy at a Home Assistant instance. Leave unset to auto-use this Supervisor's own Core API |
+| `database_url` | *(unset)* | External PostgreSQL connection string. Leave unset to use the built-in SQLite database |
+| `bambuddy_external_roots` | `[]` | In-container paths (under `/share` or `/media`) allowed as File Manager external folders |
+| `use_system_trust_store` | `false` | Trust self-signed certificates |
+
+See the [full documentation](DOCS.md) for details on each option.
 
 > **Note on port 8883:** this port is also used by MQTT brokers. If you already run Mosquitto on the same machine, configure a separate IP alias and set `bind_address` accordingly. See the [full documentation](DOCS.md) for details.
 

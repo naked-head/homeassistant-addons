@@ -1,5 +1,5 @@
 name: BamBuddy
-version: "1.0.8"
+version: "1.0.9"
 slug: bambuddy
 description: Self-hosted command center for Bambu Lab printers. No cloud required.
 url: https://github.com/naked-head/homeassistant-addons
@@ -8,11 +8,13 @@ arch:
   - amd64
   - armv7
 init: false
-homeassistant_api: false
+homeassistant_api: true
 host_network: true
 map:
   - addon_config:rw
   - data:rw
+  - share:rw
+  - media:rw
 ports:
   8000/tcp: 8000
   3000/tcp: 3000
@@ -38,13 +40,18 @@ ports_description:
   2025/tcp: Proprietary slicer port (A1/P1S)
   2026/tcp: Proprietary slicer port (A1/P1S)
 options:
-  bind_address: ""
   timezone: "Europe/Rome"
   log_level: "info"
-  trusted_frame_origins: ""
+  bambuddy_external_roots: []
+  use_system_trust_store: false
 schema:
   bind_address: "str?"
   timezone: "str"
   log_level: "list(trace|debug|info|notice|warning|error|fatal)"
   trusted_frame_origins: "str?"
-
+  ha_url: "str?"
+  ha_token: "password?"
+  database_url: "password?"
+  bambuddy_external_roots:
+    - "str"
+  use_system_trust_store: "bool"

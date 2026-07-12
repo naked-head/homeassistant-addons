@@ -10,10 +10,50 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `bind_address` | string | *(empty)* | IP address BamBuddy binds to. Leave empty for all interfaces (`0.0.0.0`), or set a specific IP alias (e.g. `192.168.50.53`) |
+| `bind_address` | string | *(unset)* | IP address BamBuddy binds to. Leave unset for all interfaces (`0.0.0.0`), or set a specific IP alias (e.g. `192.168.50.53`) |
 | `timezone` | string | `Europe/Rome` | Your local timezone |
 | `log_level` | string | `info` | Log verbosity: `trace`, `debug`, `info`, `notice`, `warning`, `error`, `fatal` |
-| `trusted_frame_origins` | string | *(empty)* | Space-separated list of origins allowed to embed BamBuddy in an iframe. Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123 https://ha.yourdomain.com`) |
+| `trusted_frame_origins` | string | *(unset)* | Space-separated list of origins allowed to embed BamBuddy in an iframe. Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123 https://ha.yourdomain.com`) |
+| `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
+| `ha_token` | password | *(unset)* | Long-lived access token for `ha_url`. Leave unset to use the Supervisor's own token automatically — only needed if `ha_url` points to a different, external HA instance |
+| `database_url` | password | *(unset)* | External PostgreSQL connection string, e.g. `postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy`. Leave unset to use BamBuddy's built-in SQLite database |
+| `bambuddy_external_roots` | list of strings | `[]` | In-container paths File Manager users may register as external folders (must be under `/share` or `/media`, e.g. `/share/3dprints`). Empty disables the feature |
+| `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
+
+> **Note on `bind_address` and `trusted_frame_origins`:** these fields have no default value and simply won't appear in the options object until you set them — this is expected, and it avoids a Supervisor quirk where an empty-string default can make an optional field disappear from the UI after a restart.
+
+---
+
+## Home Assistant integration (`ha_url` / `ha_token`)
+
+This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS install BamBuddy can already reach the Home Assistant Core API through the Supervisor's internal proxy — **you don't need to set `ha_url` or `ha_token` at all**. They're provided only for the case where you want BamBuddy to talk to a *different* Home Assistant instance than the one running this add-on.
+
+---
+
+## External library folders (`bambuddy_external_roots`)
+
+BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. For security, BamBuddy requires operators to explicitly allow which paths can be registered.
+
+This add-on mounts the Home Assistant `/share` and `/media` folders into the container, since those are the only host paths a HA add-on is able to expose. To use the feature:
+
+1. Make sure the folder you want to expose is reachable under HA's own `/share` or `/media` (e.g. via the Samba/File Editor add-ons, or a network share already configured in Home Assistant).
+2. Set `bambuddy_external_roots` to the in-container path(s), e.g. `/share/3dprints`.
+3. Restart the add-on.
+4. In BamBuddy, go to **File Manager → Add external folder** and enter the same path.
+
+Paths outside `/share` and `/media` cannot be exposed by this add-on.
+
+---
+
+## External PostgreSQL database (`database_url`)
+
+By default BamBuddy stores everything in a SQLite database under the add-on's persistent data volume. If you'd rather point it at an external PostgreSQL server, set `database_url` (e.g. `postgresql+asyncpg://bambuddy:yourpassword@db-host:5432/bambuddy`). BamBuddy creates all tables automatically on first startup; backup/restore then uses `pg_dump`/`pg_restore` instead of a file copy.
+
+---
+
+## Self-signed certificates (`use_system_trust_store`)
+
+If BamBuddy needs to validate a self-signed certificate — for example when `ha_url` points to a Home Assistant instance reachable only over a self-signed HTTPS certificate — enable `use_system_trust_store`. Note that the certificate itself still needs to be trusted inside the container; this option alone does not import a certificate for you.
 
 ---
 
