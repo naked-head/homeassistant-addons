@@ -60,7 +60,7 @@ fi
 # BAMBUDDY_EXTERNAL_ROOTS wants a colon-separated list of in-container paths.
 # Map/media are mounted via config.yaml (share:rw, media:rw) so /share/... and
 # /media/... are valid entries.
-BAMBUDDY_EXTERNAL_ROOTS=$(bashio::jq "$(bashio::addon_config)" '.bambuddy_external_roots // [] | join(":")')
+BAMBUDDY_EXTERNAL_ROOTS=$(bashio::jq "/data/options.json" '.bambuddy_external_roots // [] | join(":")')
 if [ -n "${BAMBUDDY_EXTERNAL_ROOTS}" ]; then
     export BAMBUDDY_EXTERNAL_ROOTS
     bashio::log.info "External roots: ${BAMBUDDY_EXTERNAL_ROOTS}"
