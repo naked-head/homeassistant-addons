@@ -13,7 +13,7 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `bind_address` | string | *(unset)* | IP address BamBuddy binds to. Leave unset for all interfaces (`0.0.0.0`), or set a specific IP alias (e.g. `192.168.50.53`) |
 | `timezone` | string | `Europe/Rome` | Your local timezone |
 | `log_level` | string | `info` | Log verbosity: `trace`, `debug`, `info`, `notice`, `warning`, `error`, `fatal` |
-| `trusted_frame_origins` | string | *(unset)* | Space-separated list of origins allowed to embed BamBuddy in an iframe. Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123 https://ha.yourdomain.com`) |
+| `trusted_frame_origins` | string | *(unset)* | Comma-separated list of origins allowed to embed BamBuddy in an iframe (`scheme://host[:port]`, no paths, no trailing slash, no spaces). Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123,https://ha.yourdomain.com`) |
 | `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
 | `ha_token` | password | *(unset)* | Long-lived access token for `ha_url`. Leave unset to use the Supervisor's own token automatically — only needed if `ha_url` points to a different, external HA instance |
 | `database_url` | password | *(unset)* | External PostgreSQL connection string, e.g. `postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy`. Leave unset to use BamBuddy's built-in SQLite database |
