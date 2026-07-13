@@ -1,0 +1,15 @@
+blank_issues_enabled: false
+contact_links:
+  - name: BamBuddy application bug or feature request
+    url: https://github.com/maziggy/bambuddy/issues/new/choose
+    about: >-
+      Is your issue about how BamBuddy behaves (printer control, print
+      queue, plate detection, UI, notifications, etc.)? Report it upstream,
+      not here — this repo only packages BamBuddy to run as a Home
+      Assistant App and has no control over the application itself.
+  - name: Bambu Studio API / slicer engine bug
+    url: https://github.com/maziggy/bambuddy/issues/new/choose
+    about: >-
+      Slicing results, slicer engine behavior, or profile handling are
+      part of the underlying slicer, not this App wrapper. Please
+      report there instead.
