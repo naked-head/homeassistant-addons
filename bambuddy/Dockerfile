@@ -9,6 +9,7 @@ WORKDIR /app
 RUN apk add --no-cache \
     build-base \
     py3-opencv \
+    ca-certificates \
     curl \
     ffmpeg \
     python3 \

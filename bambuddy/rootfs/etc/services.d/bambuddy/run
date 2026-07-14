@@ -52,9 +52,11 @@ fi
 chmod +x /etc/services.d/bambuddy/finish 2>/dev/null || true
 
 if bashio::config.has_value 'trusted_frame_origins'; then
-    TRUSTED_FRAME_ORIGINS=$(bashio::config 'trusted_frame_origins')
-    export TRUSTED_FRAME_ORIGINS="${TRUSTED_FRAME_ORIGINS}"
-    bashio::log.info "Trusted frame origins: ${TRUSTED_FRAME_ORIGINS}"
+    TRUSTED_FRAME_ORIGINS=$(bashio::jq "/data/options.json" '.trusted_frame_origins // [] | join(",")')
+    if [ -n "${TRUSTED_FRAME_ORIGINS}" ]; then
+        export TRUSTED_FRAME_ORIGINS
+        bashio::log.info "Trusted frame origins: ${TRUSTED_FRAME_ORIGINS}"
+    fi
 fi
 
 if bashio::config.has_value 'database_url'; then
@@ -63,18 +65,39 @@ if bashio::config.has_value 'database_url'; then
     bashio::log.info "Using external PostgreSQL database"
 fi
 
-# BAMBUDDY_EXTERNAL_ROOTS wants a colon-separated list of in-container paths.
-# Map/media are mounted via config.yaml (share:rw, media:rw) so /share/... and
-# /media/... are valid entries.
-BAMBUDDY_EXTERNAL_ROOTS=$(bashio::jq "/data/options.json" '.bambuddy_external_roots // [] | join(":")')
-if [ -n "${BAMBUDDY_EXTERNAL_ROOTS}" ]; then
-    export BAMBUDDY_EXTERNAL_ROOTS
-    bashio::log.info "External roots: ${BAMBUDDY_EXTERNAL_ROOTS}"
+# External storage (Share / Media). Mounted via config.yaml (share:rw, media:rw);
+# these two toggles just control whether BamBuddy is allowed to register them.
+EXTERNAL_ROOTS=""
+if bashio::config.true 'enable_share'; then
+    bashio::log.info "Enabling /share as external root"
+    EXTERNAL_ROOTS="/share"
+fi
+if bashio::config.true 'enable_media'; then
+    bashio::log.info "Enabling /media as external root"
+    if [ -n "${EXTERNAL_ROOTS}" ]; then
+        EXTERNAL_ROOTS="${EXTERNAL_ROOTS}:/media"
+    else
+        EXTERNAL_ROOTS="/media"
+    fi
+fi
+if [ -n "${EXTERNAL_ROOTS}" ]; then
+    export BAMBUDDY_EXTERNAL_ROOTS="${EXTERNAL_ROOTS}"
+    bashio::log.info "External roots: ${EXTERNAL_ROOTS}"
 fi
 
 if bashio::config.true 'use_system_trust_store'; then
-    export USE_SYSTEM_TRUST_STORE="true"
-    bashio::log.info "System trust store enabled"
+    CERTFILE=$(bashio::config 'certfile')
+    CERT_SRC="/config/${CERTFILE}"
+    if [ -n "${CERTFILE}" ] && [ -f "${CERT_SRC}" ]; then
+        bashio::log.info "Installing CA certificate: ${CERTFILE}"
+        cp "${CERT_SRC}" "/usr/local/share/ca-certificates/${CERTFILE}"
+        update-ca-certificates
+        export USE_SYSTEM_TRUST_STORE="true"
+        bashio::log.info "System trust store enabled"
+    else
+        bashio::log.warning "use_system_trust_store is enabled but certificate file not found: ${CERT_SRC}"
+        bashio::log.warning "Place your CA certificate (.crt) in the addon_configs folder and set certfile to the correct filename"
+    fi
 fi
 
 export PORT=8000

@@ -10,38 +10,39 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `bind_address` | string | *(unset)* | IP address BamBuddy binds to. Leave unset for all interfaces (`0.0.0.0`), or set a specific IP alias (e.g. `192.168.50.53`) |
-| `timezone` | string | `Europe/Rome` | Your local timezone |
+| `bind_address` | string | *(unset)* | IP address BamBuddy binds to. Leave unset for all interfaces (IPv4 + IPv6), or set a specific IP alias (e.g. `192.168.50.53`) |
 | `log_level` | string | `info` | Log verbosity: `trace`, `debug`, `info`, `notice`, `warning`, `error`, `fatal` |
-| `trusted_frame_origins` | string | *(unset)* | Comma-separated list of origins allowed to embed BamBuddy in an iframe (`scheme://host[:port]`, no paths, no trailing slash, no spaces). Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123,https://ha.yourdomain.com`) |
+| `trusted_frame_origins` | list of strings | `[]` | Origins allowed to embed BamBuddy in an iframe — one entry per line, each `scheme://host[:port]`, no paths. Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123`) |
 | `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
 | `ha_token` | password | *(unset)* | Long-lived access token for `ha_url`. Leave unset to use the Supervisor's own token automatically — only needed if `ha_url` points to a different, external HA instance |
 | `database_url` | password | *(unset)* | External PostgreSQL connection string, e.g. `postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy`. Leave unset to use BamBuddy's built-in SQLite database |
-| `bambuddy_external_roots` | list of strings | `[]` | In-container paths File Manager users may register as external folders (must be under `/share` or `/media`, e.g. `/share/3dprints`). Empty disables the feature |
+| `enable_share` | boolean | `false` | Allow registering Home Assistant's `/share` folder as an external File Manager folder |
+| `enable_media` | boolean | `false` | Allow registering Home Assistant's `/media` folder as an external File Manager folder |
 | `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
+| `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this add-on's config folder. Only used when `use_system_trust_store` is enabled |
 
 > **Note on `bind_address` and `trusted_frame_origins`:** these fields have no default value and simply won't appear in the options object until you set them — this is expected, and it avoids a Supervisor quirk where an empty-string default can make an optional field disappear from the UI after a restart.
+
+> **Timezone:** BamBuddy's timezone is detected automatically from Home Assistant at startup via the Supervisor API — there's no `timezone` option to set manually. If the Supervisor can't be reached at startup (e.g. very first boot, temporary network hiccup), BamBuddy falls back to `UTC` until the next restart.
 
 ---
 
 ## Home Assistant integration (`ha_url` / `ha_token`)
 
-This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS install BamBuddy can already reach the Home Assistant Core API through the Supervisor's internal proxy — **you don't need to set `ha_url` or `ha_token` at all**. They're provided only for the case where you want BamBuddy to talk to a *different* Home Assistant instance than the one running this add-on.
+This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS install BamBuddy can already reach the Home Assistant Core API through the Supervisor's internal proxy — **you don't need to set `ha_url` or `ha_token` at all**. They're provided only for the case where you want BamBuddy to talk to a *different* Home Assistant instance than the one running this add-on. The same connection is also used to auto-detect the timezone at startup (see note above).
 
 ---
 
-## External library folders (`bambuddy_external_roots`)
+## External library folders (`enable_share` / `enable_media`)
 
-BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. For security, BamBuddy requires operators to explicitly allow which paths can be registered.
-
-This add-on mounts the Home Assistant `/share` and `/media` folders into the container, since those are the only host paths a HA add-on is able to expose. To use the feature:
+BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This add-on mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA add-on is able to expose — and the two toggles control whether BamBuddy is allowed to register them:
 
 1. Make sure the folder you want to expose is reachable under HA's own `/share` or `/media` (e.g. via the Samba/File Editor add-ons, or a network share already configured in Home Assistant).
-2. Set `bambuddy_external_roots` to the in-container path(s), e.g. `/share/3dprints`.
+2. Enable `enable_share` and/or `enable_media` in the add-on configuration.
 3. Restart the add-on.
-4. In BamBuddy, go to **File Manager → Add external folder** and enter the same path.
+4. In BamBuddy, go to **File Manager → Add external folder** and enter `/share` or `/media`.
 
-Paths outside `/share` and `/media` cannot be exposed by this add-on.
+Folders outside `/share` and `/media` cannot be exposed by this add-on.
 
 ---
 
@@ -51,9 +52,16 @@ By default BamBuddy stores everything in a SQLite database under the add-on's pe
 
 ---
 
-## Self-signed certificates (`use_system_trust_store`)
+## Self-signed certificates (`use_system_trust_store` / `certfile`)
 
-If BamBuddy needs to validate a self-signed certificate — for example when `ha_url` points to a Home Assistant instance reachable only over a self-signed HTTPS certificate — enable `use_system_trust_store`. Note that the certificate itself still needs to be trusted inside the container; this option alone does not import a certificate for you.
+If BamBuddy needs to validate a self-signed certificate — for example when `ha_url` points to a Home Assistant instance reachable only over a self-signed HTTPS certificate — you can install that CA certificate into the add-on's trust store:
+
+1. Place your CA certificate (`.crt` file) in this add-on's config folder (`addon_configs/<slug>_bambuddy/`, accessible via the File Editor add-on).
+2. Set `certfile` to the exact filename (default: `custom_ca.crt`).
+3. Enable `use_system_trust_store`.
+4. Restart the add-on.
+
+If the certificate file isn't found at startup, the add-on logs a warning and leaves the system trust store disabled rather than failing silently.
 
 ---
 
@@ -86,7 +94,7 @@ BamBuddy's web interface cannot be embedded via HA Ingress due to SPA architectu
 
 If you access Home Assistant via HTTP on your local network:
 
-1. Set `trusted_frame_origins` in the add-on configuration to your HA URL (e.g. `http://192.168.1.100:8123`).
+1. Add your HA URL as an entry in `trusted_frame_origins` in the add-on configuration (e.g. `http://192.168.1.100:8123`).
 2. Restart the add-on.
 3. Go to **Settings → Dashboards**.
 4. Click **Add Dashboard** → **Webpage**.

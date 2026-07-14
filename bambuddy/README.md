@@ -41,13 +41,12 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | Option | Default | Description |
 |---|---|---|
 | `bind_address` | *(unset)* | IP to bind to. Leave unset for all interfaces, or set a specific IP alias (e.g. `192.168.50.53`) |
-| `timezone` | `Europe/Rome` | Your local timezone |
 | `log_level` | `info` | Log verbosity: `trace`, `debug`, `info`, `warning`, `error` |
-| `trusted_frame_origins` | *(unset)* | Comma-separated list of origins allowed to embed BamBuddy in an iframe (`scheme://host[:port]`, no paths/spaces), e.g. `http://192.168.1.100:8123,https://ha.yourdomain.com` |
-| `ha_url` / `ha_token` | *(unset)* | Point BamBuddy at a Home Assistant instance. Leave unset to auto-use this Supervisor's own Core API |
+| `trusted_frame_origins` | `[]` | Origins allowed to embed BamBuddy in an iframe — one entry per line, `scheme://host[:port]`, e.g. `http://192.168.1.100:8123` |
+| `ha_url` / `ha_token` | *(unset)* | Point BamBuddy at a Home Assistant instance. Leave unset to auto-use this Supervisor's own Core API (also used to auto-detect the timezone) |
 | `database_url` | *(unset)* | External PostgreSQL connection string. Leave unset to use the built-in SQLite database |
-| `bambuddy_external_roots` | `[]` | In-container paths (under `/share` or `/media`) allowed as File Manager external folders |
-| `use_system_trust_store` | `false` | Trust self-signed certificates |
+| `enable_share` / `enable_media` | `false` | Allow registering HA's `/share` and/or `/media` folders as File Manager external folders |
+| `use_system_trust_store` / `certfile` | `false` / `custom_ca.crt` | Trust a self-signed certificate placed in the add-on's config folder |
 
 See the [full documentation](DOCS.md) for details on each option.
 

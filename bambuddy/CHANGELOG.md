@@ -5,6 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.11]
+
+### ⚠️ BREAKING CHANGES — action required after updating
+
+- **`trusted_frame_origins` changed from a single string to a list.** If you already had this option configured (any non-empty value), **the add-on will fail to start after this update** until you fix it manually:
+  1. Go to the add-on's **Configuration** tab.
+  2. Switch to **YAML mode** (the `{}` icon, top right of the config editor).
+  3. Change `trusted_frame_origins` from a string to a list — one origin per line, e.g.:
+     ```yaml
+     trusted_frame_origins:
+       - "http://192.168.1.100:8123"
+       - "https://ha.yourdomain.com"
+     ```
+  4. Save and restart the add-on.
+  - If you never configured this option, no action is needed.
+
+- **`bambuddy_external_roots` has been removed**, replaced by two simple toggles: `enable_share` and `enable_media`. If you had this option configured with any path (e.g. `/share/3dprints`), **that configuration is silently dropped by this update** — it will not carry over automatically, and File Manager's external folders will stop working until you re-enable them:
+  1. Go to the add-on's **Configuration** tab.
+  2. Enable `enable_share` and/or `enable_media` depending on which folder(s) you used.
+  3. Save and restart the add-on.
+  4. In BamBuddy, go to **File Manager → Add external folder** and re-add `/share` or `/media`.
+
+### Other changes
+
+- Bind on `::` instead of `0.0.0.0` so BamBuddy is reachable over IPv6 in addition to IPv4 (thanks @grischard).
+- Timezone is now detected automatically from Home Assistant at startup instead of a manual `timezone` option; falls back to UTC if it can't be retrieved (thanks @grischard).
+- `use_system_trust_store` now actually installs the certificate into the container's trust store (new `certfile` option), instead of only setting an environment variable with no effect.
+- Added a Supervisor `watchdog` so the add-on restarts automatically if BamBuddy stops responding.
+- Added `ca-certificates` package to the image (required for the certificate installation above).
+
 ## [1.0.10]
 
 - Fixed a crash in `bambuddy_external_roots` handling: the `run` script called `bashio::addon_config`, which doesn't exist, instead of reading `/data/options.json` directly.
@@ -66,7 +96,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.10...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.11...HEAD
+[1.0.11]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.10...bambuddy-v1.0.11
 [1.0.10]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.9...bambuddy-v1.0.10
 [1.0.9]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.8...bambuddy-v1.0.9
 [1.0.8]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.7...bambuddy-v1.0.8
