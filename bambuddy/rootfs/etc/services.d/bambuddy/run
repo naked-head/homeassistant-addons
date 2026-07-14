@@ -23,13 +23,16 @@ else
 fi
 export HA_TOKEN
 
-TZ="$(
-    curl --silent --fail \
-        --header "Authorization: Bearer ${HA_TOKEN}" \
-        "${HA_URL%/core}/info" | # like http://supervisor/info
-    bashio::jq '.' '.data.timezone // empty'
-)"
+HA_INFO_RESPONSE=$(curl --silent --fail \
+  --header "Authorization: Bearer ${HA_TOKEN}" \
+  "${HA_URL%/core}/info" 2>/dev/null) || true
+
+TZ=""
+if [ -n "${HA_INFO_RESPONSE}" ]; then
+    TZ=$(bashio::jq "${HA_INFO_RESPONSE}" '.data.timezone // empty')
+fi
 export TZ="${TZ:-UTC}"
+bashio::log.info "Timezone: ${TZ}"
 
 if bashio::config.has_value 'bind_address'; then
     BIND_ADDRESS=$(bashio::config 'bind_address')
