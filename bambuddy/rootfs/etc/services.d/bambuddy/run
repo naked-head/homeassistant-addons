@@ -79,6 +79,6 @@ bashio::log.info "Starting BamBuddy on port ${PORT}..."
 
 cd /app
 exec python3 -m uvicorn backend.app.main:app \
-    --host 0.0.0.0 \
+    --host :: \
     --port "${PORT}" \
     --loop asyncio
