@@ -1,10 +1,35 @@
 #!/usr/bin/with-contenv bashio
 
-TZ=$(bashio::config 'timezone')
-LOG_LEVEL=$(bashio::config 'log_level')
 
-export TZ="${TZ:-Europe/Rome}"
+LOG_LEVEL=$(bashio::config 'log_level')
 export LOG_LEVEL="${LOG_LEVEL:-info}"
+
+# Home Assistant integration.
+# If ha_url/ha_token are not set, fall back to the Supervisor's internal
+# Core API proxy (available because homeassistant_api: true in config.yaml
+# makes the Supervisor inject SUPERVISOR_TOKEN into this container).
+if bashio::config.has_value 'ha_url'; then
+    HA_URL=$(bashio::config 'ha_url')
+else
+    HA_URL="http://supervisor/core"
+fi
+export HA_URL
+bashio::log.info "Home Assistant URL: ${HA_URL}"
+
+if bashio::config.has_value 'ha_token'; then
+    HA_TOKEN=$(bashio::config 'ha_token')
+else
+    HA_TOKEN="${SUPERVISOR_TOKEN}"
+fi
+export HA_TOKEN
+
+TZ="$(
+    curl --silent --fail \
+        --header "Authorization: Bearer ${HA_TOKEN}" \
+        "${HA_URL%/core}/info" | # like http://supervisor/info
+    bashio::jq '.' '.data.timezone // empty'
+)"
+export TZ="${TZ:-UTC}"
 
 if bashio::config.has_value 'bind_address'; then
     BIND_ADDRESS=$(bashio::config 'bind_address')
@@ -31,25 +56,6 @@ if bashio::config.has_value 'trusted_frame_origins'; then
     export TRUSTED_FRAME_ORIGINS="${TRUSTED_FRAME_ORIGINS}"
     bashio::log.info "Trusted frame origins: ${TRUSTED_FRAME_ORIGINS}"
 fi
-
-# Home Assistant integration.
-# If ha_url/ha_token are not set, fall back to the Supervisor's internal
-# Core API proxy (available because homeassistant_api: true in config.yaml
-# makes the Supervisor inject SUPERVISOR_TOKEN into this container).
-if bashio::config.has_value 'ha_url'; then
-    HA_URL=$(bashio::config 'ha_url')
-else
-    HA_URL="http://supervisor/core"
-fi
-export HA_URL
-bashio::log.info "Home Assistant URL: ${HA_URL}"
-
-if bashio::config.has_value 'ha_token'; then
-    HA_TOKEN=$(bashio::config 'ha_token')
-else
-    HA_TOKEN="${SUPERVISOR_TOKEN}"
-fi
-export HA_TOKEN
 
 if bashio::config.has_value 'database_url'; then
     DATABASE_URL=$(bashio::config 'database_url')
