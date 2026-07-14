@@ -90,6 +90,9 @@ fi
 
 if bashio::config.true 'use_system_trust_store'; then
     CERTFILE=$(bashio::config 'certfile')
+    if [ "${CERTFILE}" = "null" ]; then
+        CERTFILE=""
+    fi
     CERT_SRC="/config/${CERTFILE}"
     if [ -n "${CERTFILE}" ] && [ -f "${CERT_SRC}" ]; then
         bashio::log.info "Installing CA certificate: ${CERTFILE}"
@@ -98,8 +101,8 @@ if bashio::config.true 'use_system_trust_store'; then
         export USE_SYSTEM_TRUST_STORE="true"
         bashio::log.info "System trust store enabled"
     else
-        bashio::log.warning "use_system_trust_store is enabled but certificate file not found: ${CERT_SRC}"
-        bashio::log.warning "Place your CA certificate (.crt) in the addon_configs folder and set certfile to the correct filename"
+        bashio::log.warning "use_system_trust_store is enabled but no valid certificate filename/file was found."
+        bashio::log.warning "Set 'certfile' to a filename and place that CA certificate (.crt) in the addon_configs folder."
     fi
 fi
 
@@ -107,10 +110,22 @@ export PORT=8000
 export PYTHONPATH=/app
 export PYTHONUNBUFFERED=1
 
+# IPv6 is opt-in and off by default: binding uvicorn on :: has been observed
+# to stop accepting IPv4 connections entirely on some systems, even with
+# net.ipv6.bindv6only=0 at the kernel level -- this is a uvicorn/asyncio
+# socket behavior, not something we can detect or guard against from here.
+BIND_HOST="0.0.0.0"
+if bashio::config.true 'enable_ipv6'; then
+    bashio::log.warning "IPv6 enabled -- binding on :: instead of 0.0.0.0."
+    bashio::log.warning "If BamBuddy becomes unreachable after this, disable"
+    bashio::log.warning "'Enable IPv6' in the add-on configuration and restart."
+    BIND_HOST="::"
+fi
+
 bashio::log.info "Starting BamBuddy on port ${PORT}..."
 
 cd /app
 exec python3 -m uvicorn backend.app.main:app \
-    --host 0.0.0.0 \
+    --host "${BIND_HOST}" \
     --port "${PORT}" \
     --loop asyncio

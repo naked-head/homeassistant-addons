@@ -1,5 +1,5 @@
 name: BamBuddy
-version: "1.0.11"
+version: "1.0.12"
 slug: bambuddy
 description: Self-hosted command center for Bambu Lab printers. No cloud required.
 url: https://github.com/naked-head/homeassistant-addons
@@ -46,6 +46,7 @@ options:
   enable_media: false
   use_system_trust_store: false
   certfile: "custom_ca.crt"
+  enable_ipv6: false
 schema:
   bind_address: "str?"
   log_level: "list(trace|debug|info|notice|warning|error|fatal)"
@@ -54,9 +55,9 @@ schema:
   ha_url: "str?"
   ha_token: "password?"
   database_url: "password?"
-  enable_share: "bool"
-  enable_media: "bool"
+  enable_share: "bool?"
+  enable_media: "bool?"
   use_system_trust_store: "bool"
-  certfile: "str"
+  certfile: "str?"
+  enable_ipv6: "bool?"
 webui: http://[HOST]:[PORT:8000]
-watchdog: http://[HOST]:[PORT:8000]/health

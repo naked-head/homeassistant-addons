@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.12]
+
+- **Fixed a config upgrade issue**: `enable_share`, `enable_media`, and `certfile` (added in 1.0.11) were required fields in the schema, which broke saving the configuration for anyone who updated from 1.0.10 or earlier without those keys already present. They are now optional (`bool?`/`str?`); the App already handled their absence gracefully at runtime (features simply stay disabled), it was only the schema stopping the save. Applied the same fix preemptively to `enable_ipv6`, introduced below, for the same reason.
+- **Removed the Supervisor `watchdog`** added in 1.0.11. On at least one system it caused repeated false-positive restarts every ~2 minutes, unrelated to BamBuddy's actual health — traced to the health-check connection silently timing out rather than failing fast. Not worth the risk for the benefit it provided; may reconsider in the future with a more targeted implementation.
+- **Added `enable_ipv6` option (opt-in, off by default).** 1.0.11 changed the default bind address from `0.0.0.0` to `::`, intended to add IPv6 support while keeping IPv4 working (a `::` bind is normally a superset of `0.0.0.0` on Linux). In practice, this stopped accepting IPv4 connections entirely on at least one system — even with IPv6 disabled at the kernel level (`net.ipv6.bindv6only=0`), pointing to a uvicorn/asyncio-level socket behavior rather than an OS setting we can check for. Given the severity of the failure mode (complete loss of access, including via reverse proxies/tunnels), IPv6 is now **off by default** (`0.0.0.0`, matching every version before 1.0.11) and only enabled if `enable_ipv6` is explicitly turned on. If enabling it makes BamBuddy unreachable, disable it again from the Configuration tab in YAML mode and restart — this always restores access.
+
+### Note on 1.0.11
+
+Shortly after the 1.0.11 release, a bug was found in the automatic timezone detection: the code piped `curl`'s output into `bashio::jq`, but `bashio::jq` doesn't read from stdin — it crashed the App on every start (`jq: parse error: Invalid numeric literal at line 2, column 0`), triggering a restart loop. This was fixed directly on `main` without a version bump; if you installed or updated during that window and are still seeing this error, use **Repository → Check for updates** followed by **Rebuild** to pick up the fix, or update to 1.0.12.
+
 ## [1.0.11]
 
 ### ⚠️ BREAKING CHANGES — action required after updating
@@ -102,7 +112,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.11...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.12...HEAD
+[1.0.12]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.11...bambuddy-v1.0.12
 [1.0.11]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.10...bambuddy-v1.0.11
 [1.0.10]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.9...bambuddy-v1.0.10
 [1.0.9]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.8...bambuddy-v1.0.9

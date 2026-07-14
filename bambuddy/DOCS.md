@@ -10,7 +10,7 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `bind_address` | string | *(unset)* | IP address BamBuddy binds to. Leave unset for all interfaces (IPv4 + IPv6), or set a specific IP alias (e.g. `192.168.50.53`) |
+| `bind_address` | string | *(unset)* | IP address BamBuddy binds to. Leave unset for all IPv4 interfaces (`0.0.0.0`), or set a specific IP alias (e.g. `192.168.50.53`) |
 | `log_level` | string | `info` | Log verbosity: `trace`, `debug`, `info`, `notice`, `warning`, `error`, `fatal` |
 | `trusted_frame_origins` | list of strings | `[]` | Origins allowed to embed BamBuddy in an iframe — one entry per line, each `scheme://host[:port]`, no paths. Required to use BamBuddy as a HA sidebar webpage panel (e.g. `http://192.168.1.100:8123`) |
 | `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
@@ -20,10 +20,13 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `enable_media` | boolean | `false` | Allow registering Home Assistant's `/media` folder as an external File Manager folder |
 | `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
 | `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this add-on's config folder. Only used when `use_system_trust_store` is enabled |
+| `enable_ipv6` | boolean | `false` | Bind on `::` instead of `0.0.0.0` for IPv6 reachability. **Opt-in and off by default** — see warning below |
 
 > **Note on `bind_address` and `trusted_frame_origins`:** these fields have no default value and simply won't appear in the options object until you set them — this is expected, and it avoids a Supervisor quirk where an empty-string default can make an optional field disappear from the UI after a restart.
 
 > **Timezone:** BamBuddy's timezone is detected automatically from Home Assistant at startup via the Supervisor API — there's no `timezone` option to set manually. If the Supervisor can't be reached at startup (e.g. very first boot, temporary network hiccup), BamBuddy falls back to `UTC` until the next restart.
+
+> ⚠️ **`enable_ipv6` warning:** on some systems, binding uvicorn on `::` stops accepting IPv4 connections entirely — even with IPv6 disabled at the OS level (`net.ipv6.bindv6only=0`). This is a uvicorn/asyncio socket behavior we can't detect or guard against from the add-on side. If you enable this and BamBuddy becomes unreachable (locally, via reverse proxy, or via tunnel), disable `enable_ipv6` again from the Configuration tab in YAML mode and restart — this always restores access, since IPv4-only is the default and known-working configuration.
 
 ---
 

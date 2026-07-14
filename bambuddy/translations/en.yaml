@@ -3,8 +3,9 @@ configuration:
     name: Bind Address
     description: >-
       IP address BamBuddy should bind to. Useful if you have multiple network
-      interfaces or IP aliases (e.g. 192.168.50.53). Leave empty to bind to all
-      interfaces (IPv4 and IPv6).
+      interfaces or IP aliases (e.g. 192.168.50.53). Leave empty to bind to
+      all IPv4 interfaces (0.0.0.0), or all interfaces including IPv6 if
+      Enable IPv6 is on.
   log_level:
     name: Log Level
     description: >-
@@ -63,3 +64,12 @@ configuration:
       Filename of the CA certificate (.crt) to trust, placed in this add-on's
       config folder (accessible via the File Editor add-on). Only used when
       Use System Trust Store is enabled.
+  enable_ipv6:
+    name: Enable IPv6
+    description: >-
+      Bind on :: instead of 0.0.0.0 to make BamBuddy reachable over IPv6.
+      Disabled by default: on some systems, binding on :: stops accepting
+      IPv4 connections entirely, even with IPv6 disabled at the OS level,
+      which can make BamBuddy completely unreachable. If enabling this
+      breaks access, disable it again from the Configuration tab in YAML
+      mode and restart the add-on.

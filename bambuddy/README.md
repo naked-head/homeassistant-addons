@@ -40,13 +40,14 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 
 | Option | Default | Description |
 |---|---|---|
-| `bind_address` | *(unset)* | IP to bind to. Leave unset for all interfaces, or set a specific IP alias (e.g. `192.168.50.53`) |
+| `bind_address` | *(unset)* | IP to bind to. Leave unset for all IPv4 interfaces, or set a specific IP alias (e.g. `192.168.50.53`) |
 | `log_level` | `info` | Log verbosity: `trace`, `debug`, `info`, `warning`, `error` |
 | `trusted_frame_origins` | `[]` | Origins allowed to embed BamBuddy in an iframe — one entry per line, `scheme://host[:port]`, e.g. `http://192.168.1.100:8123` |
 | `ha_url` / `ha_token` | *(unset)* | Point BamBuddy at a Home Assistant instance. Leave unset to auto-use this Supervisor's own Core API (also used to auto-detect the timezone) |
 | `database_url` | *(unset)* | External PostgreSQL connection string. Leave unset to use the built-in SQLite database |
 | `enable_share` / `enable_media` | `false` | Allow registering HA's `/share` and/or `/media` folders as File Manager external folders |
 | `use_system_trust_store` / `certfile` | `false` / `custom_ca.crt` | Trust a self-signed certificate placed in the add-on's config folder |
+| `enable_ipv6` | `false` | Bind on `::` for IPv6 reachability. Opt-in — can make BamBuddy unreachable on some systems, see [DOCS.md](DOCS.md) |
 
 See the [full documentation](DOCS.md) for details on each option.
 
