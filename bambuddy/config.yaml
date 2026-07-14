@@ -40,13 +40,11 @@ ports_description:
   2025/tcp: Proprietary slicer port (A1/P1S)
   2026/tcp: Proprietary slicer port (A1/P1S)
 options:
-  timezone: "Europe/Rome"
   log_level: "info"
   bambuddy_external_roots: []
   use_system_trust_store: false
 schema:
   bind_address: "str?"
-  timezone: "str"
   log_level: "list(trace|debug|info|notice|warning|error|fatal)"
   trusted_frame_origins: "str?"
   ha_url: "str?"
