@@ -9,8 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### ⚠️ BREAKING CHANGES — action required after updating
 
-- **`trusted_frame_origins` changed from a single string to a list.** If you already had this option configured (any non-empty value), **the add-on will fail to start after this update** until you fix it manually:
-  1. Go to the add-on's **Configuration** tab.
+- **`trusted_frame_origins` changed from a single string to a list.** If you already had this option configured (any non-empty value), **the app will fail to start after this update** until you fix it manually:
+  1. Go to the app's **Configuration** tab.
   2. Switch to **YAML mode** (the `{}` icon, top right of the config editor).
   3. Change `trusted_frame_origins` from a string to a list — one origin per line, e.g.:
      ```yaml
@@ -18,13 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
        - "http://192.168.1.100:8123"
        - "https://ha.yourdomain.com"
      ```
-  4. Save and restart the add-on.
+  4. Save and restart the app.
   - If you never configured this option, no action is needed.
 
 - **`bambuddy_external_roots` has been removed**, replaced by two simple toggles: `enable_share` and `enable_media`. If you had this option configured with any path (e.g. `/share/3dprints`), **that configuration is silently dropped by this update** — it will not carry over automatically, and File Manager's external folders will stop working until you re-enable them:
-  1. Go to the add-on's **Configuration** tab.
+  1. Go to the app's **Configuration** tab.
   2. Enable `enable_share` and/or `enable_media` depending on which folder(s) you used.
-  3. Save and restart the add-on.
+  3. Save and restart the app.
   4. In BamBuddy, go to **File Manager → Add external folder** and re-add `/share` or `/media`.
 
 ### Other changes
@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Bind on `::` instead of `0.0.0.0` so BamBuddy is reachable over IPv6 in addition to IPv4 (thanks @grischard).
 - Timezone is now detected automatically from Home Assistant at startup instead of a manual `timezone` option; falls back to UTC if it can't be retrieved (thanks @grischard).
 - `use_system_trust_store` now actually installs the certificate into the container's trust store (new `certfile` option), instead of only setting an environment variable with no effect.
-- Added a Supervisor `watchdog` so the add-on restarts automatically if BamBuddy stops responding.
+- Added a Supervisor `watchdog` so the app restarts automatically if BamBuddy stops responding.
 - Added `ca-certificates` package to the image (required for the certificate installation above).
 
 ## [1.0.10]
@@ -41,7 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [1.0.9]
 
-- Fixed `trusted_frame_origins` disappearing from the UI editor after an add-on restart (removed empty-string default from `options`, kept it as a truly optional `schema` field). Applied the same fix to `bind_address`, which had the same latent issue.
+- Fixed `trusted_frame_origins` disappearing from the UI editor after an app restart (removed empty-string default from `options`, kept it as a truly optional `schema` field). Applied the same fix to `bind_address`, which had the same latent issue.
 - Added `ha_url` / `ha_token` options for Home Assistant integration. Enabled `homeassistant_api: true` so both default automatically to the Supervisor's own Core API and token when left unset.
 - Added `database_url` option to use an external PostgreSQL database instead of the built-in SQLite database.
 - Added `bambuddy_external_roots` option to allow registering external File Manager folders under `/share` or `/media`. Mapped `share:rw` and `media:rw` in `config.yaml` to support this.
@@ -89,7 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [1.0.0]
 
-- Initial release of the Home Assistant add-on
+- Initial release of the Home Assistant app
 - Based on BamBuddy v0.2.4.3
 - Supports amd64 and aarch64 architectures
 - Persistent storage via HA Supervisor data volume
