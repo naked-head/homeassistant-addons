@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
 
 
 LOG_LEVEL=$(bashio::config 'log_level')
@@ -124,7 +125,7 @@ fi
 
 bashio::log.info "Starting BamBuddy on port ${PORT}..."
 
-cd /app
+cd /app || bashio::exit.nok "Cannot cd to /app"
 exec python3 -m uvicorn backend.app.main:app \
     --host "${BIND_HOST}" \
     --port "${PORT}" \
