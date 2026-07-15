@@ -1,0 +1,24 @@
+name: BamBuddy Test
+on:
+  push:
+    paths: ['bambuddy/**', '.github/workflows/bambuddy-test.yml']
+  pull_request:
+    paths: ['bambuddy/**', '.github/workflows/bambuddy-test.yml']
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build App image
+        run: |
+          docker build \
+            --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.13-alpine3.21 \
+            -t bambuddy:test bambuddy/
+
+      - name: Build Supervisor mock
+        run: docker build -t supervisor-mock bambuddy/test/mock/
+
+      - name: Run smoke tests
+        run: ./bambuddy/test/smoke.sh
