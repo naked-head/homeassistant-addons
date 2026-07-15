@@ -1,0 +1,7 @@
+{
+  "log_level": "info",
+  "trusted_frame_origins": [],
+  "use_system_trust_store": true,
+  "certfile": "does-not-exist.crt",
+  "enable_ipv6": false
+}
