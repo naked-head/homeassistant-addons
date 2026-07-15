@@ -1,9 +1,5 @@
 name: BamBuddy Test
-on:
-  push:
-    paths: ['bambuddy/**', '.github/workflows/bambuddy-test.yml']
-  pull_request:
-    paths: ['bambuddy/**', '.github/workflows/bambuddy-test.yml']
+on: [push, pull_request]
 
 jobs:
   smoke:

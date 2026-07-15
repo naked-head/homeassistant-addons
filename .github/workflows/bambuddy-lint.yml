@@ -1,9 +1,5 @@
 name: BamBuddy Lint
-on:
-  push:
-    paths: ['bambuddy/**', '.github/workflows/bambuddy-lint.yml']
-  pull_request:
-    paths: ['bambuddy/**', '.github/workflows/bambuddy-lint.yml']
+on: [push, pull_request]
 
 jobs:
   shellcheck:
