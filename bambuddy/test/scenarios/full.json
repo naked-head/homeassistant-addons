@@ -1,0 +1,12 @@
+{
+  "bind_address": "0.0.0.0",
+  "log_level": "debug",
+  "trusted_frame_origins": ["http://192.168.50.2:8123", "https://example.com"],
+  "ha_url": "http://192.168.50.2:8123",
+  "ha_token": "fake-token-for-test",
+  "enable_share": true,
+  "enable_media": true,
+  "use_system_trust_store": false,
+  "certfile": "custom_ca.crt",
+  "enable_ipv6": false
+}
