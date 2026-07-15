@@ -23,7 +23,7 @@ else
 fi
 export HA_TOKEN
 
-HA_INFO_RESPONSE=$(curl --silent --fail \
+HA_INFO_RESPONSE=$(curl --silent --fail --max-time 5 \
   --header "Authorization: Bearer ${HA_TOKEN}" \
   "${HA_URL%/core}/info" 2>/dev/null) || true
 
