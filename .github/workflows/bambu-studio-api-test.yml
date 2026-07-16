@@ -1,0 +1,37 @@
+name: Bambu Studio API Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build App image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./bambu-studio-api
+          file: ./bambu-studio-api/Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: bsa:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Supervisor mock
+        run: docker build -t supervisor-mock test/mock/
+
+      - name: Run smoke tests
+        env:
+          BSA_IMAGE: bsa:test
+        run: ./bambu-studio-api/test/smoke.sh

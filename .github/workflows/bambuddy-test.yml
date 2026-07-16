@@ -20,7 +20,7 @@ jobs:
             -t bambuddy:test bambuddy/
 
       - name: Build Supervisor mock
-        run: docker build -t supervisor-mock bambuddy/test/mock/
+        run: docker build -t supervisor-mock test/mock/
 
       - name: Run smoke tests
         run: ./bambuddy/test/smoke.sh
