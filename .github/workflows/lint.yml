@@ -1,4 +1,4 @@
-name: BamBuddy Lint
+name: Lint
 on:
   push:
     branches: [main]
@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
@@ -15,13 +16,13 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y shellcheck
           shellcheck -x -e SC1091,SC2154 \
-            bambuddy/rootfs/etc/services.d/*/run \
-            bambuddy/rootfs/etc/services.d/*/finish \
-            bambuddy/test/*.sh
+            */rootfs/etc/services.d/*/run \
+            */rootfs/etc/services.d/*/finish \
+            */test/*.sh
 
   yaml:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: pipx install yamllint
-      - run: yamllint -d relaxed bambuddy/config.yaml bambuddy/build.yaml
+      - run: yamllint bambuddy/config.yaml bambuddy/build.yaml bambu-studio-api/config.yaml
