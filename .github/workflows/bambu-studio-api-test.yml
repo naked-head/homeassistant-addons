@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   smoke:
+    name: Bambu Studio API smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
