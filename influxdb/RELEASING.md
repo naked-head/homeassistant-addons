@@ -13,11 +13,12 @@ bashio on top of the InfluxDB base image on the user's own hardware).
 1. Bump `version:` in `config.yaml`
 2. Update `CHANGELOG.md`
 3. Merge to `main` — this triggers the builder for **both** amd64 and
-   aarch64
+   aarch64, **and makes the new version immediately visible and
+   installable to everyone tracking this repository** (see note below)
 4. **Wait for the builder to finish** and verify both tags exist:
    - `ghcr.io/naked-head/ha-app-influxdb-amd64:<version>`
    - `ghcr.io/naked-head/ha-app-influxdb-aarch64:<version>`
-5. Only then tag and publish the release
+5. Tag the merged commit, for your own reference (see "Tagging" below)
 
 ## Before merging
 
@@ -33,43 +34,49 @@ bashio on top of the InfluxDB base image on the user's own hardware).
 - [ ] New/changed options documented in `DOCS.md`, `README.md` and
       `translations/`
 
+All of this happens **before** merging, not after — see the note below on
+why there's no real staging step once `main` is updated.
+
 ## Verify the images were published
 
     docker pull ghcr.io/naked-head/ha-app-influxdb-amd64:2.8.0-1
     docker pull ghcr.io/naked-head/ha-app-influxdb-aarch64:2.8.0-1
 
-If either pull fails, do not tag the release yet.
+If either pull fails, wait — the builder may still be running for that
+architecture (both jobs need to finish, not just the first one to return).
 
-## Beta first
+## Tagging (for your own reference only)
 
-Same rule as the other apps in this repo — release as pre-release first
-when the change contains:
+The Supervisor's App Store reads `version:` straight from `config.yaml` on
+`main` — it doesn't look at git tags or GitHub Releases at all. That means
+merging step 3 above **already** ships the new version to every user
+tracking this repository, immediately, regardless of anything done here.
 
-- a bump of the pinned `influxdb:x.y.z` base image tag in the Dockerfile
-- a change to `config.yaml` schema or options
-- a refactor of `rootfs/etc/services.d/influxdb/run`
-- an s6-overlay or bashio version bump
+Because of that, there's no functional "beta" step for a plain repository
+like this one: a `-beta.1` git tag, or a GitHub Release marked as
+pre-release, does not hide the version from anyone or gate who can install
+it. The community add-on repos that do have a real beta channel (e.g.
+`hassio-addons`) achieve it with a **separate repository/branch** that
+users opt into independently by adding a second URL in the App Store —
+this repo doesn't have that setup, so don't rely on tag naming to provide
+that protection.
 
-```
-git tag influxdb-v2.8.0-2-beta.1
-git push origin influxdb-v2.8.0-2-beta.1
-```
+Given that, the tag is just so you (and anyone reading history) can find
+which commit corresponds to which shipped version:
 
-GitHub → Releases → Draft new release → select the tag →
-check **Set as a pre-release**.
+    git tag influxdb-v2.8.0-2
+    git push origin influxdb-v2.8.0-2
 
-Only users with "Show beta versions" enabled will see it. Wait a few days.
-No reports → promote to stable.
+No GitHub Release needs to be published from it — this matches what's
+actually been done for BamBuddy and Bambu Studio API so far (both have
+tags, neither has a published Release).
 
-## Stable release
-
-```
-git tag influxdb-v2.8.0-2
-git push origin influxdb-v2.8.0-2
-```
-
-GitHub → Releases → Draft new release → select the tag → publish (not
-pre-release).
+If a change is risky enough that you want a real staged rollout (a bump of
+the pinned `influxdb:x.y.z` tag, a `config.yaml` schema change, an
+s6-overlay/bashio version bump), the mitigation is to do that verification
+**before** merging — thorough local testing per the "Before merging"
+checklist above — since merging is the point of no staged return, not
+after it.
 
 ## Bumping the pinned InfluxDB version
 
@@ -86,7 +93,9 @@ change under you:
   including a real upgrade test against `/data` from the previous pinned
   version.
 
-Both of the above are reasons to release as beta first.
+Both of the above are reasons to run the full local verification before
+merging, not after — see the note on tagging above for why there's no
+staged rollout once `main` is updated.
 
 ## If it breaks in production
 
