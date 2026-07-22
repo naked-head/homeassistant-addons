@@ -31,5 +31,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Dockerfile build.
 - Supported architectures: amd64, aarch64.
 
+### Fixed
+
+- `DOCS.md` migration "Option B" (direct file copy) now also lists
+  `influxd.sqlite` (notebooks/annotations metadata) alongside `influxd.bolt`
+  and `engine/`. Confirmed from a real first boot that InfluxDB 2.8.0
+  writes this file by default in the same directory as the bolt path
+  (`/data/influxd.sqlite`); a copy that skipped it would silently lose
+  notebooks and annotations, not the time-series data itself.
+
 [Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/influxdb-v2.8.0-1...HEAD
 [2.8.0-1]: https://github.com/naked-head/homeassistant-addons/releases/tag/influxdb-v2.8.0-1
