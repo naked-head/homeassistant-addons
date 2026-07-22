@@ -101,11 +101,19 @@ Find the app's container name with `docker ps | grep influxdb` (typically
 ### Option B — direct file copy (faster, same version)
 
 Since source and destination are both **2.8.0**, you can also stop the old
-container, copy the `influxd.bolt` file and the `engine/` folder straight
-from its data volume (`/var/lib/influxdb2` by default) into `/data` on the
-new app (expected final paths: `/data/influxd.bolt` and `/data/engine/`),
-and start the new app with `init_mode: skip`. Faster on large datasets, but
-without the validation `influx restore` performs on the data.
+container and copy three items straight from its data volume
+(`/var/lib/influxdb2` by default) into `/data` on the new app:
+
+- `influxd.bolt` (users, orgs, buckets, dashboards, tasks)
+- `influxd.sqlite` (notebooks and annotations — easy to miss, since it's a
+  separate file from the bolt DB; skipping it silently loses notebooks and
+  annotations, not the actual time-series data)
+- the `engine/` folder (the actual time-series data)
+
+Expected final paths: `/data/influxd.bolt`, `/data/influxd.sqlite`, and
+`/data/engine/`. Then start the new app with `init_mode: skip`. Faster on
+large datasets, but without the validation `influx restore` performs on
+the data.
 
 Either way, keep the old container stopped (or at least not writing to the
 same bucket) until you've confirmed the new app works correctly, to avoid

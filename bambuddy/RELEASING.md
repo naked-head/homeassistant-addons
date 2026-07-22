@@ -11,32 +11,41 @@
 - [ ] `CHANGELOG.md` updated
 - [ ] New/changed options documented in `DOCS.md` and `translations/`
 
-## Beta first
+All of this happens **before** merging to `main`, not after — see the note
+below on why there's no real staging step once `main` is updated.
 
-Always release as pre-release first when the release contains:
+## Tagging (for your own reference only)
 
-- a PR from a third party
-- code ported from another fork
-- changes to `config.yaml` schema or options
-- a refactor of `rootfs/etc/services.d/bambuddy/run`
+The Supervisor's App Store reads `version:` straight from `config.yaml` on
+`main` — it doesn't look at git tags, GitHub Releases, or HACS at all (this
+is a Supervisor add-on repository, a different mechanism from HACS, which
+only manages integrations/frontend/themes). That means merging your
+changes to `main` already ships the new version to everyone tracking this
+repository, immediately, regardless of anything done here.
 
-Tag and push:
+Because of that, there's no functional "beta" step for a plain repository
+like this one: a `-beta.1` git tag, or a GitHub Release marked as
+pre-release, does not hide the version from anyone or gate who can install
+it. The community add-on repos that do have a real beta channel (e.g.
+`hassio-addons`) achieve it with a **separate repository/branch** that
+users opt into independently by adding a second URL in the App Store —
+this repo doesn't have that setup, so don't rely on tag naming to provide
+that protection.
 
-    git tag bambuddy-v1.0.13-beta.1
-    git push origin bambuddy-v1.0.13-beta.1
-
-Then on GitHub → Releases → Draft new release → select the tag →
-check **Set as a pre-release**.
-
-Only users with "Show beta versions" enabled in HACS will see it.
-Wait a few days. No reports → promote to stable.
-
-## Stable release
+Given that, the tag is just so you (and anyone reading history) can find
+which commit corresponds to which shipped version:
 
     git tag bambuddy-v1.0.13
     git push origin bambuddy-v1.0.13
 
-GitHub → Releases → Draft new release → select the tag → publish (not pre-release).
+No GitHub Release needs to be published from it.
+
+If a change is risky enough that you'd want a real staged rollout (a
+third-party PR, code ported from another fork, a `config.yaml` schema
+change, a refactor of `rootfs/etc/services.d/bambuddy/run`), the
+mitigation is to do that verification thoroughly **before** merging — via
+the "Before tagging" checklist above — since merging is the point of no
+staged return, not after it.
 
 ## If it breaks in production
 

@@ -2,7 +2,7 @@
 
 Unlike BamBuddy, this App ships a **pre-built image** (`image:` in
 `config.yaml`, published to GHCR by `.github/workflows/bambu-studio-api-build.yml`).
-The image must exist before users can install the new version — otherwise HACS
+The image must exist before users can install the new version — otherwise HA
 offers a version whose image cannot be pulled, and the Supervisor falls back to
 building the Dockerfile locally (~15 minutes on a typical HA host).
 
@@ -10,10 +10,12 @@ building the Dockerfile locally (~15 minutes on a typical HA host).
 
 1. Bump `version:` in `config.yaml`
 2. Update `CHANGELOG.md`
-3. Merge to `main` — this triggers the builder
+3. Merge to `main` — this triggers the builder, **and makes the new
+   version immediately visible and installable to everyone tracking this
+   repository** (see note below)
 4. **Wait for the builder to finish** and verify the tag exists at
    `ghcr.io/naked-head/ha-app-bambu-studio-api-amd64:<version>`
-5. Only then tag and publish the release
+5. Tag the merged commit, for your own reference (see "Tagging" below)
 
 ## Before merging
 
@@ -23,29 +25,44 @@ building the Dockerfile locally (~15 minutes on a typical HA host).
 - [ ] `CHANGELOG.md` updated
 - [ ] New/changed options documented in `DOCS.md` and `translations/`
 
+All of this happens **before** merging, not after — see the note below on
+why there's no real staging step once `main` is updated.
+
 ## Verify the image was published
 
     docker pull ghcr.io/naked-head/ha-app-bambu-studio-api-amd64:0.1.9
 
-If this fails, do not tag the release yet.
+If this fails, wait — the builder may still be running.
 
-## Beta first
+## Tagging (for your own reference only)
 
-Same rule as BamBuddy — pre-release when the change contains a third-party PR,
-an upstream version bump (`BAMBU_VERSION` / `UPSTREAM_REF`), or schema changes.
+The Supervisor's App Store reads `version:` straight from `config.yaml` on
+`main` — it doesn't look at git tags or GitHub Releases at all. That means
+merging step 3 above **already** ships the new version to every user
+tracking this repository, immediately, regardless of anything done here.
 
-    git tag bambu-studio-api-v0.1.9-beta.1
-    git push origin bambu-studio-api-v0.1.9-beta.1
+Because of that, there's no functional "beta" step for a plain repository
+like this one: a `-beta.1` git tag, or a GitHub Release marked as
+pre-release, does not hide the version from anyone or gate who can install
+it. The community add-on repos that do have a real beta channel (e.g.
+`hassio-addons`) achieve it with a **separate repository/branch** that
+users opt into independently by adding a second URL in the App Store —
+this repo doesn't have that setup, so don't rely on tag naming to provide
+that protection.
 
-GitHub → Releases → Draft new release → select the tag →
-check **Set as a pre-release**.
-
-## Stable release
+Given that, the tag is just so you (and anyone reading history) can find
+which commit corresponds to which shipped version:
 
     git tag bambu-studio-api-v0.1.9
     git push origin bambu-studio-api-v0.1.9
 
-GitHub → Releases → Draft new release → select the tag → publish.
+No GitHub Release needs to be published from it.
+
+If a change is risky enough that you want a real staged rollout (a
+third-party PR, an upstream version bump of `BAMBU_VERSION`/`UPSTREAM_REF`,
+or a schema change), the mitigation is to do that verification thoroughly
+**before** merging, per the "Before merging" checklist above — since
+merging is the point of no staged return, not after it.
 
 ## Upstream version bumps
 
@@ -57,4 +74,6 @@ can change under you:
 - `UPSTREAM_REF` is a branch, not a tag: upstream can move it. A rebuild with
   no local changes can therefore produce a different image.
 
-Both are reasons to release as beta first.
+Both are reasons to run the full local verification before merging, not
+after — see the note on tagging above for why there's no staged rollout
+once `main` is updated.
