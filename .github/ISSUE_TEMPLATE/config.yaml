@@ -13,3 +13,11 @@ contact_links:
       Slicing results, slicer engine behavior, or profile handling are
       part of the underlying slicer, not this App wrapper. Please
       report there instead.
+  - name: InfluxDB itself bug or feature request
+    url: https://github.com/influxdata/influxdb/issues
+    about: >-
+      Is your issue about InfluxDB's own behavior (query results, Flux/SQL,
+      the Web UI, dashboards, tasks/alerts, client libraries, etc.)? Report
+      it upstream, not here — this repo only packages InfluxDB OSS to run
+      as a Home Assistant App and has no control over the database engine
+      itself.

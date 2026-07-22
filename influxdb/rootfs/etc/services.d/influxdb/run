@@ -1,0 +1,84 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+
+bashio::log.info "Starting InfluxDB..."
+
+# ---------------------------------------------------------------------------
+# Data paths: always under /data, managed and persisted by the Supervisor.
+# ---------------------------------------------------------------------------
+export INFLUXD_BOLT_PATH="/data/influxd.bolt"
+export INFLUXD_ENGINE_PATH="/data/engine"
+export INFLUXD_HTTP_BIND_ADDRESS=":8086"
+
+# ---------------------------------------------------------------------------
+# Simple options
+# ---------------------------------------------------------------------------
+export INFLUXD_LOG_LEVEL
+INFLUXD_LOG_LEVEL=$(bashio::config 'log_level')
+
+if bashio::config.true 'reporting'; then
+    export INFLUXD_REPORTING_DISABLED="false"
+    bashio::log.debug "Anonymous reporting to InfluxData: enabled."
+else
+    export INFLUXD_REPORTING_DISABLED="true"
+    bashio::log.debug "Anonymous reporting to InfluxData: disabled."
+fi
+
+# ---------------------------------------------------------------------------
+# Optional initial setup (org/bucket/user/token) via environment variables.
+#
+# Note: InfluxData's own init logic (invoked below) is already idempotent —
+# if /data/influxd.bolt already exists, setup is skipped regardless of
+# DOCKER_INFLUXDB_INIT_MODE. This block therefore only prepares the
+# variables for the *very first* boot; on every later restart it has no
+# effect and there's no risk of resetting an existing database.
+# ---------------------------------------------------------------------------
+init_mode=$(bashio::config 'init_mode')
+
+if [[ "${init_mode}" == "setup" ]]; then
+    bashio::log.info "init_mode=setup: preparing automatic setup for first boot."
+
+    for opt in init_username init_password init_org init_bucket; do
+        if ! bashio::config.has_value "${opt}"; then
+            bashio::log.fatal "init_mode is 'setup' but '${opt}' is empty."
+            bashio::log.fatal "Set init_username, init_password, init_org and init_bucket, or switch init_mode to 'skip' and complete setup from the InfluxDB Web UI."
+            bashio::exit.nok
+        fi
+    done
+
+    export DOCKER_INFLUXDB_INIT_MODE="setup"
+    export DOCKER_INFLUXDB_INIT_USERNAME
+    DOCKER_INFLUXDB_INIT_USERNAME=$(bashio::config 'init_username')
+    export DOCKER_INFLUXDB_INIT_PASSWORD
+    DOCKER_INFLUXDB_INIT_PASSWORD=$(bashio::config 'init_password')
+    export DOCKER_INFLUXDB_INIT_ORG
+    DOCKER_INFLUXDB_INIT_ORG=$(bashio::config 'init_org')
+    export DOCKER_INFLUXDB_INIT_BUCKET
+    DOCKER_INFLUXDB_INIT_BUCKET=$(bashio::config 'init_bucket')
+    export DOCKER_INFLUXDB_INIT_RETENTION
+    DOCKER_INFLUXDB_INIT_RETENTION=$(bashio::config 'init_retention')
+
+    if bashio::config.has_value 'init_admin_token'; then
+        export DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+        DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=$(bashio::config 'init_admin_token')
+    fi
+else
+    bashio::log.info "init_mode=skip: no automatic setup, complete it from the Web UI on :8086 on first boot (or restore an existing backup)."
+fi
+
+# ---------------------------------------------------------------------------
+# Permissions: the official entrypoint, invoked as root here, does a gosu
+# step-down to the "influxdb" user before running influxd. That entrypoint
+# only knows about /var/lib/influxdb2, not our Supervisor-managed /data —
+# without this chown, influxd would fail to write either the bolt file or
+# the engine on first boot.
+# ---------------------------------------------------------------------------
+mkdir -p "${INFLUXD_ENGINE_PATH}"
+chown -R influxdb:influxdb /data
+
+# ---------------------------------------------------------------------------
+# Startup: hand off to the official InfluxData entrypoint, which handles
+# setup (if requested) and then runs `influxd` with the paths/port above.
+# ---------------------------------------------------------------------------
+bashio::log.info "Handing off to the official InfluxData entrypoint (bolt-path=${INFLUXD_BOLT_PATH}, engine-path=${INFLUXD_ENGINE_PATH})."
+exec /entrypoint.sh influxd

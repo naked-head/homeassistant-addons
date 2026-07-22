@@ -1,0 +1,43 @@
+name: InfluxDB Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: InfluxDB smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # amd64 only here: GitHub-hosted runners are amd64, and running a full
+      # InfluxDB service under QEMU aarch64 emulation in CI is slow and
+      # flaky. The aarch64 build itself is still verified — just not run —
+      # by InfluxDB Builder (influxdb-build.yml), which builds and pushes
+      # both architectures.
+      - name: Build App image (amd64)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./influxdb
+          file: ./influxdb/Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: influxdb:test
+          cache-from: type=gha,scope=influxdb-amd64
+          cache-to: type=gha,mode=max,scope=influxdb-amd64
+
+      - name: Build Supervisor mock
+        run: docker build -t supervisor-mock test/mock/
+
+      - name: Run smoke tests
+        env:
+          INFLUXDB_IMAGE: influxdb:test
+        run: ./influxdb/test/smoke.sh

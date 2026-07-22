@@ -21,5 +21,8 @@ Self-hosted command center for Bambu Lab printers. Manage your entire printer fa
 ### [Bambu Studio API](./bambu-studio-api)
 Headless Bambu Studio CLI wrapped in a REST API. Sidecar for Bambuddy server-side slicing — lets Bambuddy dispatch slice jobs without a desktop slicer install. amd64 only.
 
+### [InfluxDB](./influxdb)
+InfluxDB OSS 2.8.0, the time-series database, for Home Assistant long-term history or any other time-series data. Fills the gap left by `hassio-addons/addon-influxdb`, which only covers v1.x and is no longer maintained.
+
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
