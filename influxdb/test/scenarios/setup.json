@@ -1,0 +1,11 @@
+{
+  "reporting": false,
+  "log_level": "info",
+  "init_mode": "setup",
+  "init_username": "admin",
+  "init_password": "supersecretpassword1",
+  "init_org": "home",
+  "init_bucket": "home_assistant",
+  "init_admin_token": "",
+  "init_retention": "0"
+}

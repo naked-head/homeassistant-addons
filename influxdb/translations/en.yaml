@@ -1,0 +1,51 @@
+configuration:
+  reporting:
+    name: Anonymous Usage Reporting
+    description: >-
+      Send anonymous usage data to InfluxData. Disabled by default for
+      privacy.
+  log_level:
+    name: Log Level
+    description: >-
+      Verbosity of InfluxDB logs. Use 'info' for normal use, 'debug' for
+      troubleshooting.
+  init_mode:
+    name: Initial Setup Mode
+    description: >-
+      'skip': do the first-run setup (org, bucket, user, token) yourself from
+      the Web UI on port 8086. 'setup': do it automatically on first boot
+      using the Initial Username/Password/Organization/Bucket options below.
+      Only applies on the very first boot, when /data is still empty — later
+      restarts ignore these options, so there's no risk of overwriting an
+      existing database.
+  init_username:
+    name: Initial Username
+    description: >-
+      Admin username created on first boot. Required if Initial Setup Mode is
+      'setup'.
+  init_password:
+    name: Initial Password
+    description: >-
+      Password for the initial admin user. Required if Initial Setup Mode is
+      'setup'.
+  init_org:
+    name: Initial Organization
+    description: >-
+      Organization created on first boot. Required if Initial Setup Mode is
+      'setup'.
+  init_bucket:
+    name: Initial Bucket
+    description: >-
+      Bucket created on first boot. Required if Initial Setup Mode is
+      'setup'.
+  init_admin_token:
+    name: Initial Operator Token
+    description: >-
+      Optional operator token to set explicitly on first boot. Leave empty to
+      let InfluxDB generate one — you can read it afterwards from the Web UI
+      under Load Data → API Tokens.
+  init_retention:
+    name: Initial Bucket Retention
+    description: >-
+      Retention period for the initial bucket, in seconds. "0" means
+      infinite retention.

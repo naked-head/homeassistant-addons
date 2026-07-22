@@ -1,0 +1,88 @@
+name: InfluxDB App — Bug Report
+description: Problem installing, updating, or configuring the InfluxDB App for Home Assistant.
+labels: ["bug", "app:influxdb"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before you continue
+
+        This repository only packages InfluxDB OSS to run as a Home Assistant
+        **App** (formerly called "Add-on") — it wires together Docker, s6-overlay,
+        `config.yaml`, and the Supervisor integration. **It is not InfluxDB itself.**
+
+        If your problem is about InfluxDB's own behavior — query results, the Flux/SQL
+        language, the Web UI, dashboards, task/alert engine, client libraries, etc. —
+        please report it upstream instead, where the actual maintainers can act on it:
+
+        👉 https://github.com/influxdata/influxdb/issues
+
+        Issues about InfluxDB's own behavior opened here will be redirected and closed,
+        which just delays getting help. Rule of thumb: if reinstalling the App or
+        changing one of its options wouldn't affect the problem, it's an upstream issue.
+
+  - type: checkboxes
+    id: confirm-scope
+    attributes:
+      label: Confirm this issue belongs here
+      options:
+        - label: >-
+            This is about installing, updating, or configuring the InfluxDB App itself
+            (not about InfluxDB's own query/UI/task-engine behavior once it's running).
+          required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: InfluxDB App version
+      description: Settings → Apps → InfluxDB → top of page.
+      placeholder: e.g. 2.8.0-1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ha-install
+    attributes:
+      label: Home Assistant installation type
+      options:
+        - Home Assistant OS
+        - Home Assistant Supervised
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Architecture
+      options:
+        - amd64
+        - aarch64
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: App configuration (YAML)
+      description: >-
+        Settings → Apps → InfluxDB → Configuration tab → switch to YAML mode
+        and paste it here. Remove/redact passwords and tokens first
+        (init_password, init_admin_token).
+      render: yaml
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: App logs
+      description: Settings → Apps → InfluxDB → Log tab. Please redact anything sensitive.
+      render: shell

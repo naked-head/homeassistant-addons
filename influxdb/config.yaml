@@ -1,0 +1,48 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: InfluxDB
+version: "2.8.0-1"
+url: "https://github.com/naked-head/homeassistant-addons"
+slug: influxdb
+stage: stable
+description: InfluxDB v2.x time-series database, for Home Assistant long-term history and any other time-series data.
+# Pre-built image published by .github/workflows/influxdb-build.yml. HA
+# will pull this first and only fall back to building the Dockerfile
+# locally if the pull fails (e.g. before the first CI run completes).
+image: "ghcr.io/naked-head/ha-app-influxdb-{arch}"
+arch:
+  - amd64
+  - aarch64
+init: false
+host_network: false
+
+map:
+  - data:rw
+
+ports:
+  "8086/tcp": 8086
+ports_description:
+  "8086/tcp": "InfluxDB HTTP API and Web UI"
+
+options:
+  reporting: false
+  log_level: "info"
+  init_mode: "skip"
+  init_username: ""
+  init_password: ""
+  init_org: ""
+  init_bucket: ""
+  init_admin_token: ""
+  init_retention: "0"
+schema:
+  reporting: "bool"
+  log_level: "list(trace|debug|info|warn|error|fatal)"
+  init_mode: "list(skip|setup)"
+  init_username: "str?"
+  init_password: "password?"
+  init_org: "str?"
+  init_bucket: "str?"
+  init_admin_token: "password?"
+  init_retention: "str?"
+
+webui: "http://[HOST]:[PORT:8086]"
+watchdog: "http://[HOST]:[PORT:8086]/health"
