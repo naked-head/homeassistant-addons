@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.22] - 2026-09-24
+
+### Changed
+- Updated BamBuddy to 1.2.5.6 (from 1.2.5.5). The first release since 1.2.5 whose headline is not a feature: around 40 fixes, three behaviour changes, Swedish as the fifteenth interface language. What makes it worth updating promptly are three faults that took the whole server down rather than one page — slicing a plate of many copies of one part could get BamBuddy killed for running out of memory, a printer offline for hours could wedge the connection watchdog, and restoring a backup made by a different version could drop the live database and then fail on the way back up. The last one is now refused before anything is touched instead of halfway through.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.6
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+- **A camera token no longer opens thumbnails.** Thirteen routes that have nothing to do with a camera — library and archive thumbnails, plate previews, timelapses, print photos, QR codes, project covers, external-link icons — used to take the camera stream token as their credential. They now take a media token carrying the identity of whoever asked, so each applies the permission its own resource is governed by. If you embed any of those images in a Lovelace card using a pasted `camera_stream`, `camwall` or `overlay` token, it will stop loading: switch to an API key, which those routes accept as `X-API-Key` or `Authorization: Bearer`. The cam wall, the streaming overlay and the kiosk views use the three real camera routes and are unaffected.
+- **ntfy per-event priorities start being honoured.** They have been set, stored and silently discarded since the feature shipped. The values already in your database take effect on restart, so an event you mapped to Min or Low will arrive quieter than it did before. That is the setting working, not notifications going missing.
+- **Downgrading to 1.0.21 or earlier is no longer supported.** On first start this release drops an unused column from `user_wallets`, and that is not reversible. An older version does still start on the migrated database, but any page reading that column can fail, and a backup written by this release is now refused on restore by an older one. If you want a way back, take a backup before updating and keep it — a backup made by 1.0.21 restores onto 1.0.21 as it always did.
+
 ## [1.0.21] - 2026-09-06
 
 ### Fixed
@@ -120,7 +132,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/1.2.5
 
 Behaviour changes worth knowing about before updating:
-- Bed levelling, flow calibration and nozzle-offset calibration are now three-way Off / Auto / On, with new prints defaulting to Auto. Existing queued prints are migrated automatically.
+- Bed levelling, flow calibration and nozzle-offset calibration are now three-way Off / Auto / On, with new prints defaulting to Auto. Existing queued prin## [1.0.22] - 2026-09-24
+
+### Changed
+- Updated BamBuddy to 1.2.5.6 (from 1.2.5.5). The first release since 1.2.5 whose headline is not a feature: around 40 fixes, three behaviour changes, Swedish as the fifteenth interface language. What makes it worth updating promptly are three faults that took the whole server down rather than one page — slicing a plate of many copies of one part could get BamBuddy killed for running out of memory, a printer offline for hours could wedge the connection watchdog, and restoring a backup made by a different version could drop the live database and then fail on the way back up. The last one is now refused before anything is touched instead of halfway through.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.6
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+- **A camera token no longer opens thumbnails.** Thirteen routes that have nothing to do with a camera — library and archive thumbnails, plate previews, timelapses, print photos, QR codes, project covers, external-link icons — used to take the camera stream token as their credential. They now take a media token carrying the identity of whoever asked, so each applies the permission its own resource is governed by. If you embed any of those images in a Lovelace card using a pasted `camera_stream`, `camwall` or `overlay` token, it will stop loading: switch to an API key, which those routes accept as `X-API-Key` or `Authorization: Bearer`. The cam wall, the streaming overlay and the kiosk views use the three real camera routes and are unaffected.
+- **ntfy per-event priorities start being honoured.** They have been set, stored and silently discarded since the feature shipped. The values already in your database take effect on restart, so an event you mapped to Min or Low will arrive quieter than it did before. That is the setting working, not notifications going missing.
+- **Downgrading to 1.0.21 or earlier is no longer supported.** On first start this release drops an unused column from `user_wallets`, and that is not reversible. An older version does still start on the migrated database, but any page reading that column can fail, and a backup written by this release is now refused on restore by an older one. If you want a way back, take a backup before updating and keep it — a backup made by 1.0.21 restores onto 1.0.21 as it always did.ts are migrated automatically.
 - Bambu Cloud sign-in state is now detected correctly. If you linked your Bambu account before enabling authentication, you may need to re-link once from the Profiles page.
 - P1S / P1P AMS drying is screen-only — upstream removed Start/Stop because P1 firmware discards the command.
 - REST smart plugs (Shelly): if your Energy JSON Path points at a lifetime counter, move it to the new "Energy JSON Path (lifetime)" field.
@@ -128,14 +150,44 @@ Behaviour changes worth knowing about before updating:
 
 ## [1.0.12] - 2026-07-15
 
-- **Fixed a config upgrade issue**: `enable_share`, `enable_media`, and `certfile` (added in 1.0.11) were required fields in the schema, which broke saving the configuration for anyone who updated from 1.0.10 or earlier without those keys already present. They are now optional (`bool?`/`str?`); the App already handled their absence gracefully at runtime (features simply stay disabled), it was only the schema stopping the save. Applied the same fix preemptively to `enable_ipv6`, introduced below, for the same reason.
+- **Fixed a config upgrade issue**: `enable_share`, `enable_media`, and `certfile` (added in 1.0.11) were required fields in the schema, which broke saving the configuration for anyone who updated from 1.0.10 or earlier without those keys already present. They are now optional (`bool?`/`str?`); the App already handled their absence gracefully at runtime (features simply stay disabled), it was only the schema stopping the save. Applied the same fix preemptively to `enable_ipv6`, introduced below, for the## [1.0.22] - 2026-09-24
+
+### Changed
+- Updated BamBuddy to 1.2.5.6 (from 1.2.5.5). The first release since 1.2.5 whose headline is not a feature: around 40 fixes, three behaviour changes, Swedish as the fifteenth interface language. What makes it worth updating promptly are three faults that took the whole server down rather than one page — slicing a plate of many copies of one part could get BamBuddy killed for running out of memory, a printer offline for hours could wedge the connection watchdog, and restoring a backup made by a different version could drop the live database and then fail on the way back up. The last one is now refused before anything is touched instead of halfway through.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.6
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+- **A camera token no longer opens thumbnails.** Thirteen routes that have nothing to do with a camera — library and archive thumbnails, plate previews, timelapses, print photos, QR codes, project covers, external-link icons — used to take the camera stream token as their credential. They now take a media token carrying the identity of whoever asked, so each applies the permission its own resource is governed by. If you embed any of those images in a Lovelace card using a pasted `camera_stream`, `camwall` or `overlay` token, it will stop loading: switch to an API key, which those routes accept as `X-API-Key` or `Authorization: Bearer`. The cam wall, the streaming overlay and the kiosk views use the three real camera routes and are unaffected.
+- **ntfy per-event priorities start being honoured.** They have been set, stored and silently discarded since the feature shipped. The values already in your database take effect on restart, so an event you mapped to Min or Low will arrive quieter than it did before. That is the setting working, not notifications going missing.
+- **Downgrading to 1.0.21 or earlier is no longer supported.** On first start this release drops an unused column from `user_wallets`, and that is not reversible. An older version does still start on the migrated database, but any page reading that column can fail, and a backup written by this release is now refused on restore by an older one. If you want a way back, take a backup before updating and keep it — a backup made by 1.0.21 restores onto 1.0.21 as it always did. same reason.
 - **Removed the Supervisor `watchdog`** added in 1.0.11. On at least one system it caused repeated false-positive restarts every ~2 minutes, unrelated to BamBuddy's actual health — traced to the health-check connection silently timing out rather than failing fast. Not worth the risk for the benefit it provided; may reconsider in the future with a more targeted implementation.
-- **Added `enable_ipv6` option (opt-in, off by default).** 1.0.11 changed the default bind address from `0.0.0.0` to `::`, intended to add IPv6 support while keeping IPv4 working (a `::` bind is normally a superset of `0.0.0.0` on Linux). In practice, this stopped accepting IPv4 connections entirely on at least one system — even with IPv6 disabled at the kernel level (`net.ipv6.bindv6only=0`), pointing to a uvicorn/asyncio-level socket behavior rather than an OS setting we can check for. Given the severity of the failure mode (complete loss of access, including via reverse proxies/tunnels), IPv6 is now **off by default** (`0.0.0.0`, matching every version before 1.0.11) and only enabled if `enable_ipv6` is explicitly turned on. If enabling it makes BamBuddy unreachable, disable it again from the Configuration tab in YAML mode and restart — this always restores access.
+- **Added `enable_ipv6` option (opt-in, off by default).** 1.0.11 changed the default bind address from `0.0.0.0` to `::`, intended to add IPv6 support while keeping IPv4 working (a `::` bind is normally a superset of `0.0.0.0` on Linux). In practice, this stopped accepting IPv4 connections entirely on at least one system — even with IPv6 disabled at the kernel level (`net.ipv6.bindv6only=0`), pointing to a uvicorn/asyncio-level socket behavior rather than an OS setting we can check for. Given the severity of the failure mode (complete loss of access, including via reverse proxies/tunnels), IPv6 is now **off by default** (`0.0.0.0`, matching every version before 1.0.11) and only enabled if `enable_ipv6` is explicitly turned on. If enabling it makes BamBuddy unreachable, disable it again from the Configuration tab in YAML mode and resta## [1.0.22] - 2026-09-24
+
+### Changed
+- Updated BamBuddy to 1.2.5.6 (from 1.2.5.5). The first release since 1.2.5 whose headline is not a feature: around 40 fixes, three behaviour changes, Swedish as the fifteenth interface language. What makes it worth updating promptly are three faults that took the whole server down rather than one page — slicing a plate of many copies of one part could get BamBuddy killed for running out of memory, a printer offline for hours could wedge the connection watchdog, and restoring a backup made by a different version could drop the live database and then fail on the way back up. The last one is now refused before anything is touched instead of halfway through.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.6
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+- **A camera token no longer opens thumbnails.** Thirteen routes that have nothing to do with a camera — library and archive thumbnails, plate previews, timelapses, print photos, QR codes, project covers, external-link icons — used to take the camera stream token as their credential. They now take a media token carrying the identity of whoever asked, so each applies the permission its own resource is governed by. If you embed any of those images in a Lovelace card using a pasted `camera_stream`, `camwall` or `overlay` token, it will stop loading: switch to an API key, which those routes accept as `X-API-Key` or `Authorization: Bearer`. The cam wall, the streaming overlay and the kiosk views use the three real camera routes and are unaffected.
+- **ntfy per-event priorities start being honoured.** They have been set, stored and silently discarded since the feature shipped. The values already in your database take effect on restart, so an event you mapped to Min or Low will arrive quieter than it did before. That is the setting working, not notifications going missing.
+- **Downgrading to 1.0.21 or earlier is no longer supported.** On first start this release drops an unused column from `user_wallets`, and that is not reversible. An older version does still start on the migrated database, but any page reading that column can fail, and a backup written by this release is now refused on restore by an older one. If you want a way back, take a backup before updating and keep it — a backup made by 1.0.21 restores onto 1.0.21 as it always did.rt — this always restores access.
 
 ### Note on 1.0.11
 
 Shortly after the 1.0.11 release, a bug was found in the automatic timezone detection: the code piped `curl`'s output into `bashio::jq`, but `bashio::jq` doesn't read from stdin — it crashed the App on every start (`jq: parse error: Invalid numeric literal at line 2, column 0`), triggering a restart loop. This was fixed directly on `main` without a version bump; if you installed or updated during that window and are still seeing this error, use **Repository → Check for updates** followed by **Rebuild** to pick up the fix, or update to 1.0.12.
+## [1.0.22] - 2026-09-24
 
+### Changed
+- Updated BamBuddy to 1.2.5.6 (from 1.2.5.5). The first release since 1.2.5 whose headline is not a feature: around 40 fixes, three behaviour changes, Swedish as the fifteenth interface language. What makes it worth updating promptly are three faults that took the whole server down rather than one page — slicing a plate of many copies of one part could get BamBuddy killed for running out of memory, a printer offline for hours could wedge the connection watchdog, and restoring a backup made by a different version could drop the live database and then fail on the way back up. The last one is now refused before anything is touched instead of halfway through.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.6
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+- **A camera token no longer opens thumbnails.** Thirteen routes that have nothing to do with a camera — library and archive thumbnails, plate previews, timelapses, print photos, QR codes, project covers, external-link icons — used to take the camera stream token as their credential. They now take a media token carrying the identity of whoever asked, so each applies the permission its own resource is governed by. If you embed any of those images in a Lovelace card using a pasted `camera_stream`, `camwall` or `overlay` token, it will stop loading: switch to an API key, which those routes accept as `X-API-Key` or `Authorization: Bearer`. The cam wall, the streaming overlay and the kiosk views use the three real camera routes and are unaffected.
+- **ntfy per-event priorities start being honoured.** They have been set, stored and silently discarded since the feature shipped. The values already in your database take effect on restart, so an event you mapped to Min or Low will arrive quieter than it did before. That is the setting working, not notifications going missing.
+- **Downgrading to 1.0.21 or earlier is no longer supported.** On first start this release drops an unused column from `user_wallets`, and that is not reversible. An older version does still start on the migrated database, but any page reading that column can fail, and a backup written by this release is now refused on restore by an older one. If you want a way back, take a backup before updating and keep it — a backup made by 1.0.21 restores onto 1.0.21 as it always did.
 ## [1.0.11] - 2026-07-14
 
 ### ⚠️ BREAKING CHANGES — action required after updating
@@ -233,7 +285,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.21...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.22...HEAD
+[1.0.22]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.21...bambuddy-v1.0.22
 [1.0.21]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.20...bambuddy-v1.0.21
 [1.0.20]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.19...bambuddy-v1.0.20
 [1.0.19]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.18...bambuddy-v1.0.19
